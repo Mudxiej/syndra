@@ -1,0 +1,246 @@
+/* Photo-derived vector silhouette with joint-driven skinning. No bitmap rendering. */
+(() => {
+  const CONTOURS = [[[431,159],[438,159],[438,160],[450,163],[451,165],[455,166],[455,168],[457,168],[462,173],[462,175],[464,176],[464,178],[466,180],[468,193],[467,193],[465,200],[461,206],[461,209],[460,209],[460,211],[455,219],[453,229],[451,230],[449,246],[448,246],[448,249],[446,251],[446,255],[445,255],[445,259],[444,259],[444,263],[443,263],[443,272],[442,272],[439,290],[438,290],[438,292],[433,300],[433,303],[432,303],[432,310],[431,310],[431,313],[430,313],[430,316],[428,319],[428,323],[427,323],[427,327],[425,330],[425,335],[423,338],[423,343],[422,343],[422,347],[421,347],[419,360],[418,360],[417,366],[415,368],[415,374],[414,374],[414,379],[413,379],[413,384],[412,384],[412,389],[411,389],[411,396],[410,396],[410,401],[409,401],[409,406],[408,406],[407,417],[414,418],[414,419],[429,419],[429,417],[431,416],[433,406],[434,406],[436,399],[437,399],[437,393],[438,393],[438,391],[441,387],[441,384],[442,384],[442,379],[443,379],[444,373],[445,373],[446,368],[447,368],[447,366],[450,362],[450,359],[453,355],[453,352],[454,352],[454,349],[455,349],[455,346],[456,346],[456,343],[457,343],[457,340],[459,337],[459,332],[460,332],[461,324],[463,321],[463,317],[464,317],[465,300],[466,300],[466,297],[467,297],[467,294],[468,294],[468,291],[469,291],[470,285],[471,285],[472,273],[473,273],[473,268],[474,268],[474,264],[475,264],[475,252],[476,252],[476,247],[477,247],[477,238],[478,238],[479,227],[480,227],[480,222],[481,222],[481,217],[482,217],[483,203],[484,203],[484,200],[485,200],[487,193],[497,183],[502,182],[502,181],[506,181],[506,180],[522,181],[522,182],[525,182],[525,183],[531,185],[533,188],[535,188],[537,190],[537,192],[543,198],[543,202],[545,204],[546,212],[547,212],[547,215],[549,218],[548,262],[547,262],[546,281],[545,281],[546,304],[547,304],[546,335],[545,335],[545,340],[544,340],[544,344],[543,344],[543,349],[542,349],[541,354],[540,354],[538,361],[537,361],[537,369],[536,369],[536,372],[535,372],[535,375],[533,377],[533,381],[531,384],[530,398],[529,398],[529,402],[528,402],[528,406],[527,406],[527,410],[526,410],[526,416],[525,416],[523,427],[522,427],[522,433],[520,436],[518,452],[517,452],[517,459],[516,459],[514,476],[513,476],[513,482],[512,482],[512,486],[511,486],[511,490],[510,490],[505,514],[504,514],[504,520],[503,520],[503,524],[502,524],[502,528],[501,528],[499,537],[497,539],[497,542],[495,544],[495,547],[494,547],[494,550],[493,550],[493,553],[491,556],[490,563],[491,564],[496,563],[499,551],[501,550],[501,548],[503,547],[505,542],[508,540],[511,533],[513,532],[513,530],[517,526],[517,524],[525,516],[525,514],[527,514],[527,512],[530,509],[530,491],[531,491],[532,483],[534,480],[536,468],[537,468],[537,465],[539,463],[540,455],[541,455],[541,452],[543,449],[543,444],[545,442],[547,435],[549,434],[551,429],[554,427],[554,425],[563,417],[563,415],[570,408],[572,408],[578,402],[586,400],[586,399],[593,399],[593,398],[603,399],[603,400],[611,403],[611,405],[613,406],[614,411],[615,411],[613,430],[612,430],[612,434],[611,434],[611,438],[610,438],[610,442],[609,442],[609,446],[608,446],[608,450],[607,450],[608,473],[607,473],[607,481],[606,481],[606,502],[607,502],[608,521],[607,521],[607,529],[606,529],[606,532],[604,533],[604,537],[601,540],[598,547],[594,550],[593,555],[592,555],[592,557],[588,563],[588,566],[586,568],[586,571],[583,575],[583,578],[582,578],[582,580],[577,588],[577,591],[576,591],[576,593],[575,593],[575,595],[574,595],[574,597],[569,605],[569,608],[566,612],[566,615],[563,618],[563,621],[561,623],[561,626],[560,626],[560,629],[558,631],[557,637],[555,639],[555,643],[553,645],[551,653],[548,656],[545,663],[539,668],[539,670],[536,673],[534,673],[531,677],[529,677],[526,681],[524,681],[520,686],[518,686],[514,691],[512,691],[498,705],[496,705],[493,709],[491,709],[485,716],[483,716],[477,723],[475,723],[467,732],[465,732],[450,747],[448,747],[439,757],[434,759],[432,762],[430,762],[426,766],[424,766],[416,771],[413,771],[411,773],[408,773],[406,775],[400,776],[400,777],[396,778],[395,780],[392,780],[391,782],[382,786],[378,790],[374,791],[365,800],[363,800],[353,810],[333,830],[331,830],[317,844],[317,846],[314,849],[312,849],[312,851],[309,853],[309,855],[303,860],[303,862],[299,865],[299,867],[295,871],[0,871],[0,788],[9,780],[11,780],[17,776],[21,776],[21,775],[45,774],[45,775],[54,775],[54,776],[60,776],[60,777],[63,776],[64,773],[72,766],[72,764],[87,749],[87,747],[91,744],[91,742],[94,740],[94,738],[96,737],[96,735],[100,731],[101,727],[105,723],[106,717],[107,717],[111,707],[113,706],[113,703],[115,702],[115,700],[118,696],[118,693],[119,693],[121,686],[122,686],[122,683],[123,683],[123,678],[124,678],[124,673],[125,673],[125,662],[126,662],[127,606],[128,606],[128,597],[129,597],[129,588],[130,588],[130,573],[131,573],[131,556],[130,556],[130,547],[129,547],[129,537],[128,537],[128,531],[127,531],[126,520],[125,520],[126,445],[127,445],[126,437],[127,437],[128,393],[129,393],[129,380],[130,380],[130,342],[131,342],[132,332],[133,332],[136,324],[138,323],[138,320],[141,316],[141,313],[142,313],[143,309],[145,308],[147,301],[150,298],[150,296],[151,296],[151,294],[152,294],[152,292],[153,292],[153,290],[154,290],[154,288],[155,288],[155,286],[156,286],[156,284],[157,284],[157,282],[158,282],[158,280],[163,272],[166,261],[168,259],[168,256],[170,255],[171,251],[175,248],[177,243],[182,239],[182,237],[184,236],[184,234],[188,230],[192,221],[195,220],[194,218],[196,217],[198,212],[204,206],[208,207],[214,199],[220,198],[220,197],[230,197],[230,198],[234,198],[234,199],[239,200],[240,202],[242,202],[246,206],[246,208],[249,212],[249,215],[250,215],[250,227],[249,227],[249,231],[247,234],[247,238],[245,240],[243,248],[240,251],[239,257],[236,259],[236,261],[233,264],[228,276],[224,279],[222,287],[219,289],[217,300],[215,303],[215,307],[214,307],[214,310],[212,313],[208,333],[207,333],[206,338],[205,338],[204,343],[203,343],[203,353],[204,353],[205,362],[206,362],[206,366],[207,366],[207,370],[208,370],[208,374],[209,374],[209,378],[210,378],[210,382],[211,382],[211,389],[212,389],[212,400],[213,400],[212,412],[213,412],[214,417],[219,417],[221,414],[222,402],[223,402],[223,397],[224,397],[224,388],[225,388],[225,381],[226,381],[226,374],[227,374],[227,367],[228,367],[230,352],[231,352],[233,340],[234,340],[236,329],[237,329],[240,305],[241,305],[241,300],[242,300],[242,296],[244,294],[246,283],[249,280],[250,276],[252,275],[257,264],[262,260],[262,258],[267,254],[267,252],[270,250],[272,245],[279,238],[279,236],[283,232],[285,226],[287,225],[287,223],[290,221],[291,217],[293,216],[297,207],[311,193],[313,193],[315,190],[317,190],[325,181],[330,180],[331,178],[334,178],[334,177],[338,177],[338,176],[350,176],[352,178],[353,177],[362,178],[362,179],[370,182],[371,184],[373,184],[381,192],[382,197],[385,198],[385,196],[388,194],[390,189],[393,188],[394,183],[400,178],[401,173],[406,168],[408,168],[410,165],[412,165],[413,163],[415,163],[417,161],[426,161],[426,160],[431,160]],[[364,238],[365,238],[365,236],[349,251],[349,253],[347,254],[347,258],[346,258],[345,262],[342,264],[341,268],[339,269],[338,274],[337,274],[337,282],[336,282],[334,292],[333,292],[332,297],[328,303],[326,311],[321,319],[321,324],[319,327],[319,331],[318,331],[317,338],[315,341],[315,348],[314,348],[312,382],[311,382],[310,392],[309,392],[309,398],[310,398],[311,402],[316,401],[317,394],[318,394],[318,391],[320,388],[320,384],[321,384],[321,381],[323,378],[323,374],[324,374],[324,370],[325,370],[325,366],[326,366],[326,362],[327,362],[327,358],[328,358],[328,353],[329,353],[329,349],[330,349],[330,344],[331,344],[333,332],[334,332],[336,321],[337,321],[337,315],[338,315],[338,311],[339,311],[339,307],[340,307],[340,302],[341,302],[342,295],[343,295],[343,289],[344,289],[344,285],[345,285],[345,282],[346,282],[347,277],[348,277],[351,261],[354,258],[355,254],[357,253],[357,250],[359,249],[359,246],[363,242]]];
+  // Four digits: MCP -> PIP -> DIP -> fingertip.
+  // Thumb: basal CMC -> MCP -> IP -> fingertip. Skin pieces extend below
+  // these pivots; their cut edges are not additional anatomical joints.
+  const CHAINS = {
+    pinky: [[168,420],[166,345],[197,275],[224,220]],
+    ring: [[270,430],[278,320],[318,246],[344,201]],
+    middle: [[358,445],[384,335],[412,255],[431,185]],
+    index: [[451,460],[486,350],[515,278],[512,210]],
+    thumb: [[452,695],[550,534],[573,475],[594,421]]
+  };
+  const names=Object.keys(CHAINS), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
+  const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+  const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+  const lengths=Object.fromEntries(names.map(f=>[f,CHAINS[f].slice(1).map((p,i)=>distance(p,CHAINS[f][i]))]));
+  function eligible(p,f) {
+    if(f==='pinky')return p[0]<242&&p[1]<440;
+    if(f==='ring')return p[0]>215&&p[0]<386&&p[1]<448;
+    if(f==='middle')return p[0]>290&&p[0]<476&&p[1]<464;
+    if(f==='index')return p[0]>404&&p[1]<482;
+    return p[0]>484&&p[1]<620;
+  }
+  function binding(p, onlyFinger=null) {
+    let best=null;
+    for(const f of names) {
+      if(onlyFinger ? f!==onlyFinger : !eligible(p,f))continue;
+      const chain=CHAINS[f];
+      for(let i=0;i<3;i++) {
+        const a=chain[i],b=chain[i+1],dx=b[0]-a[0],dy=b[1]-a[1];
+        const t=clamp(((p[0]-a[0])*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy),0,1);
+        const center=lerp(a,b,t),d=distance(p,center);
+        if(!best||d<best.distance)best={finger:f,bone:i,t,distance:d};
+      }
+    }
+    if(!best||best.distance>70)return null;
+    const {finger:f,bone:i,t}=best;
+    const progress=lengths[f].slice(0,i).reduce((a,b)=>a+b,0)+lengths[f][i]*t;
+    best.influence=smooth(progress/55);
+    // Adjacent rigid bones blend only around their shared joint.
+    const span=Math.min(0.30,18/lengths[f][i]);
+    best.weights=[[i,1]];
+    if(i>0&&t<span) {
+      const w=0.5*smooth(1-t/span);best.weights=[[i,1-w],[i-1,w]];
+    } else if(i<2&&t>1-span) {
+      const w=0.5*smooth((t-(1-span))/span);best.weights=[[i,1-w],[i+1,w]];
+    }
+    return best;
+  }
+  // Follow both real sidewalls of each digit. Only the short base seam is
+  // internal; no region boundary is allowed to slice through a fingertip.
+  const outer=CONTOURS[0],gap=CONTOURS[1];
+  function mark(contour,target){
+    let best=null;
+    for(let i=0;i<contour.length;i++){
+      const a=contour[i],b=contour[(i+1)%contour.length];
+      const dx=b[0]-a[0],dy=b[1]-a[1],den=dx*dx+dy*dy;
+      const t=den?clamp(((target[0]-a[0])*dx+(target[1]-a[1])*dy)/den,0,1):0;
+      const p=lerp(a,b,t),d=distance(p,target);
+      if(!best||d<best.distance)best={position:i+t,p,distance:d};
+    }
+    return best;
+  }
+  function arc(contour,start,end){
+    let stop=end.position;
+    if(stop<=start.position)stop+=contour.length;
+    const result=[start.p];
+    for(let i=Math.floor(start.position)+1;i<=Math.floor(stop);i++)result.push(contour[i%contour.length]);
+    result.push(end.p);return result;
+  }
+  // User-marked segmentation: full finger sidewalls with rounded proximal
+  // bases extending into the hand, plus the thumb's thenar/base section.
+  const pinkyOuter=mark(outer,[128,500]);
+  const pinkyRingWeb=mark(outer,[219,417]);
+  const ringMiddleBridge=mark(outer,[385,198]);
+  const middleIndexWeb=mark(outer,[414,419]);
+  const indexBase=mark(outer,[501,528]);
+  const thumbInner=mark(outer,[491,564]);
+  const thumbOuter=mark(outer,[439,757]);
+  const gapTop=mark(gap,[365,236]),gapBottom=mark(gap,[311,402]);
+  function roundedBase(start,controls,end){
+    // Sample a cubic boundary once; both adjoining parts share these points.
+    const points=[start], [c1,c2]=controls;
+    for(let i=1;i<=20;i++){
+      const t=i/20,u=1-t;
+      points.push([u*u*u*start[0]+3*u*u*t*c1[0]+3*u*t*t*c2[0]+t*t*t*end[0],
+        u*u*u*start[1]+3*u*u*t*c1[1]+3*u*t*t*c2[1]+t*t*t*end[1]]);
+    }
+    return points;
+  }
+  const base={
+    pinky:roundedBase(pinkyRingWeb.p,[[274,560],[165,567]],pinkyOuter.p),
+    ring:roundedBase(gapBottom.p,[[338,521],[226,525]],pinkyRingWeb.p),
+    middle:roundedBase(middleIndexWeb.p,[[415,490],[298,514]],gapBottom.p),
+    index:roundedBase(indexBase.p,[[448,555],[400,513]],middleIndexWeb.p),
+    thumb:roundedBase(thumbOuter.p,[[360,715],[399,601]],thumbInner.p)
+  };
+  const partContours={
+    pinky:[[...arc(outer,pinkyOuter,pinkyRingWeb),...base.pinky.slice(1)]],
+    ring:[[...arc(outer,pinkyRingWeb,ringMiddleBridge),...arc(gap,gapTop,gapBottom),...base.ring.slice(1)]],
+    middle:[[...arc(outer,ringMiddleBridge,middleIndexWeb),...base.middle.slice(1),...arc(gap,gapBottom,gapTop)]],
+    index:[[...arc(outer,middleIndexWeb,indexBase),...base.index.slice(1)]],
+    thumb:[[...arc(outer,thumbInner,thumbOuter),...base.thumb.slice(1)]],
+    palm:[[
+      ...[...base.pinky].reverse(),
+      ...[...base.ring].reverse().slice(1),
+      ...[...base.middle].reverse().slice(1),
+      ...[...base.index].reverse().slice(1),
+      ...arc(outer,indexBase,thumbInner).slice(1),
+      ...[...base.thumb].reverse().slice(1),
+      ...arc(outer,thumbOuter,pinkyOuter).slice(1)
+    ]]
+  };
+  function distanceToBase(point,curve){
+    let nearest=Infinity;
+    for(let i=0;i<curve.length-1;i++){
+      const a=curve[i],b=curve[i+1],dx=b[0]-a[0],dy=b[1]-a[1];
+      const den=dx*dx+dy*dy;
+      const t=den?clamp(((point[0]-a[0])*dx+(point[1]-a[1])*dy)/den,0,1):0;
+      nearest=Math.min(nearest,distance(point,lerp(a,b,t)));
+    }
+    return nearest;
+  }
+  const parts=Object.fromEntries(Object.entries(partContours).map(([f,contours])=>[f,contours.map(outline=>{
+    const vertices=[];
+    for(let i=0;i<outline.length;i++){
+      const a=outline[i],b=outline[(i+1)%outline.length],steps=Math.max(1,Math.ceil(distance(a,b)/5));
+      for(let j=0;j<steps;j++){
+        const p=lerp(a,b,j/steps),bind=f==='palm'?null:binding(p,f);
+        // Pin the entire shared thenar seam, not just one CMC point.
+        // Motion fades in above the seam so outward thumb reaches cannot
+        // pull its base away from the separately rendered palm.
+        if(bind&&f==='thumb')bind.influence*=smooth(distanceToBase(p,base.thumb)/95);
+        vertices.push({p,bind});
+      }
+    }
+    return vertices;
+  })]));
+  function solve(f,target,shorten=false) {
+    const rest=CHAINS[f],lens=[...lengths[f]],tip=rest[3];
+    const movement=distance(tip,target);
+    if(movement<0.001)return {joints:rest,shift:[0,0],movement:0};
+    const total=lens.reduce((a,b)=>a+b,0),root=rest[0];
+    const dx=target[0]-root[0],dy=target[1]-root[1],reach=Math.hypot(dx,dy);
+    // Nearer-row reaches flex toward the viewer: foreshorten the finger
+    // instead of producing an in-plane sideways IK fold.
+    const restReach=distance(root,tip);
+    if(shorten||(f==='middle'&&reach<restReach)){
+      const rx=(tip[0]-root[0])/restReach,ry=(tip[1]-root[1])/restReach;
+      const nx=reach>0.001?dx/reach:rx,ny=reach>0.001?dy/reach:ry;
+      const joints=rest.map(p=>{
+        const x=p[0]-root[0],y=p[1]-root[1];
+        const along=(x*rx+y*ry)/restReach,across=-x*ry+y*rx;
+        return [root[0]+dx*along-ny*across,root[1]+dy*along+nx*across];
+      });
+      return {joints,shift:[0,0],movement};
+    }
+    // This is a 2D projection of the resting pose. Reveal additional length
+    // as the finger extends, keeping its transverse width and MCP fixed.
+    // Share the extension across the proximal, middle and distal segments.
+    const shift=[0,0],origin=[...root];
+    const extension=Math.max(0,reach-total*0.985);
+    if(extension>0){
+      const shares=f==='thumb'?[0.50,0.32,0.18]:[0.46,0.34,0.20];
+      for(let i=0;i<3;i++)lens[i]+=extension*shares[i];
+    }
+    const initialAngle=Math.atan2(tip[1]-root[1],tip[0]-root[0]);
+    const targetAngle=Math.atan2(target[1]-origin[1],target[0]-origin[0]);
+    const turn=targetAngle-initialAngle,c=Math.cos(turn),s=Math.sin(turn);
+    let joints=rest.map(p=>[origin[0]+(p[0]-root[0])*c-(p[1]-root[1])*s,origin[1]+(p[0]-root[0])*s+(p[1]-root[1])*c]);
+    // Solve the projected joint chain with an anchored MCP and distal target.
+    for(let iteration=0;iteration<18;iteration++) {
+      joints[3]=[...target];
+      for(let i=2;i>=0;i--) {
+        const d=distance(joints[i],joints[i+1])||1;
+        joints[i]=lerp(joints[i+1],joints[i],lens[i]/d);
+      }
+      joints[0]=origin;
+      for(let i=0;i<3;i++) {
+        const d=distance(joints[i],joints[i+1])||1;
+        joints[i+1]=lerp(joints[i],joints[i+1],lens[i]/d);
+      }
+      if(distance(joints[3],target)<0.03)break;
+    }
+    // Fade into/out of the original pose near rest to avoid an IK branch pop.
+    const blend=smooth(movement/12);
+    if(blend<1)joints=joints.map((p,i)=>lerp(rest[i],p,blend));
+    return {joints,shift:shift.map(v=>v*blend),movement};
+  }
+  function rotateVertex(p,rest,posed,bone) {
+    const a=rest[bone],b=rest[bone+1],c=posed[bone],d=posed[bone+1];
+    const restLength=distance(a,b)||1,posedLength=distance(c,d)||1;
+    const rx=(b[0]-a[0])/restLength,ry=(b[1]-a[1])/restLength;
+    const px=(d[0]-c[0])/posedLength,py=(d[1]-c[1])/posedLength;
+    const dx=p[0]-a[0],dy=p[1]-a[1];
+    const along=(dx*rx+dy*ry)*(posedLength/restLength);
+    const across=-dx*ry+dy*rx;
+    return [c[0]+along*px-across*py,c[1]+along*py+across*px];
+  }
+  class SilhouetteHandRig {
+    constructor(){this.matrix=[1,0,0,1,0,0];this.poses={};this.shortening={};this.parts=parts;this.restChains=CHAINS;}
+    calibrate(matrix){this.matrix=matrix;}
+    project(p){const [a,b,c,d,e,f]=this.matrix;return [a*p[0]+c*p[1]+e,b*p[0]+d*p[1]+f];}
+    inverseDelta(dx,dy){const [a,b,c,d]=this.matrix,det=a*d-b*c;return [(d*dx-c*dy)/det,(-b*dx+a*dy)/det];}
+    path(points,close=true){return points.map((p,i)=>{const q=this.project(p);return `${i?'L':'M'}${q[0].toFixed(2)} ${q[1].toFixed(2)}`}).join(' ')+(close?' Z':'');}
+    render(states){
+      const poses={};
+      for(const f of names){
+        const delta=this.inverseDelta(states[f].current.x-states[f].home.x,states[f].current.y-states[f].home.y);
+        const held=[...states[f].activeKeys];
+        if(held.length){
+          const latest=held[held.length-1];
+          this.shortening[f]=['KeyG','KeyH','KeyC','AltLeft','AltRight'].includes(latest);
+        }else if(Math.hypot(...delta)<0.001){
+          this.shortening[f]=false;
+        }
+        // Retain this pose mode during key-up travel back to the home key.
+        const tip=CHAINS[f][3];poses[f]=solve(f,[tip[0]+delta[0],tip[1]+delta[1]],!!this.shortening[f]);
+      }
+      this.poses=poses;
+      const deform=(p,bind,f)=>{
+        if(!bind||f==='palm')return p;
+        const posed=poses[f].joints,rest=CHAINS[f];
+        let skinned=[0,0];
+        for(const [bone,w]of bind.weights){const q=rotateVertex(p,rest,posed,bone);skinned[0]+=q[0]*w;skinned[1]+=q[1]*w;}
+        return lerp(p,skinned,bind.influence);
+      };
+      const paths={},outlines={},details={};
+      for(const [f,contours]of Object.entries(parts)){
+        paths[f]=contours.map(vertices=>this.path(vertices.map(({p,bind})=>deform(p,bind,f)))).join(' ');
+        if(f==='palm')continue;
+        outlines[f]=paths[f];
+        let detail='';const js=poses[f].joints;
+        for(const j of [1,2]){
+          const a=js[j-1],b=js[j+1],len=distance(a,b)||1,n=[-(b[1]-a[1])/len,(b[0]-a[0])/len],center=js[j];
+          detail+=this.path([[center[0]-n[0]*12,center[1]-n[1]*12],[center[0]+n[0]*12,center[1]+n[1]*12]],false)+' ';
+        }
+        details[f]=detail;
+      }
+      return {paths,d:Object.values(paths).join(' '),outlines,details,poses};
+    }
+  }
+  window.SilhouetteHandRig=SilhouetteHandRig;
+})();

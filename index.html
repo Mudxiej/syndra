@@ -1,0 +1,3088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROJECT SYNDRA - Valorant Ergonomic Architecture by Mud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Pure Neutral Ink Black & Signal Red Palette */
+      --bg: #0a0a0a;
+      --bg-gradient: radial-gradient(circle at 50% -12%, rgba(198, 49, 61, 0.22) 0%, #0d0d0d 45%, #070707 100%);
+      --surface: #141414;
+      --surface-elevated: #1a1a1a;
+      --border: #242424;
+      --border-bright: #363636;
+      --accent-red: #c6313d;
+      --accent-red-bright: #ff4655;
+      --accent-red-hover: #a82835;
+      --red-glow: rgba(198, 49, 61, 0.35);
+      --red-badge-bg: rgba(198, 49, 61, 0.15);
+      --text: #ffffff;
+      --text-dim: #c7c7cc;
+      --text-muted: #737373;
+
+      /* Preserved Functional Bind Colors */
+      --color-blue: #4f8cff;
+      --color-green: #10b981;
+      --color-red: #ef4444;
+      --color-amber: #ffd84d;
+      --color-violet: #8b5cf6;
+      --color-orange: #ff8a3d;
+
+      --key-base: #171717;
+      --key-border: rgba(255, 255, 255, 0.08);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --u: 52px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
+
+    /* Target Section Smooth Scroll Padding */
+    section, .showcase-header, .mouse-section, .guide-section {
+      scroll-margin-top: 80px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Top Navigation Pill */
+    .top-nav {
+      padding: 24px 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+    .brand-badge {
+      background: var(--red-badge-bg);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red-bright);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+    .brand-name {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .nav-btn {
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover {
+      color: #fff;
+      background: var(--surface);
+      border-color: var(--border-bright);
+    }
+    .nav-cta {
+      background: var(--accent-red);
+      border: 1px solid var(--accent-red);
+      color: #fff;
+    }
+    .nav-cta:hover {
+      background: var(--accent-red-hover);
+      border-color: var(--accent-red-bright);
+      color: #fff;
+      box-shadow: 0 0 14px var(--red-glow);
+    }
+
+    /* ADHD Quick-Read Executive Brief */
+    .adhd-summary-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 32px auto 0;
+      max-width: 1200px;
+      width: 100%;
+      text-align: left;
+    }
+    @media (max-width: 960px) {
+      .adhd-summary-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 540px) {
+      .adhd-summary-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .summary-chip {
+      background: #101015;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .summary-chip:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+    }
+    .summary-chip.highlight-chip {
+      border-color: rgba(198, 49, 61, 0.45);
+      background: linear-gradient(180deg, rgba(198, 49, 61, 0.12) 0%, #101015 100%);
+    }
+    .summary-chip-num {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent-red-bright);
+      line-height: 1.1;
+    }
+    .summary-chip.highlight-chip .summary-chip-num {
+      color: #ff5c6a;
+    }
+    .summary-chip-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+    .summary-chip-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    /* Chapter Frame System */
+    .chapter-frame {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: clamp(20px, 2.5vw, 36px);
+      margin-bottom: 40px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      scroll-margin-top: 80px;
+      transition: border-color 0.2s ease;
+    }
+    .chapter-frame:hover {
+      border-color: var(--border-bright);
+    }
+
+    .chapter-header {
+      margin-bottom: 24px;
+    }
+    .chapter-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-red-bright);
+      margin-bottom: 8px;
+    }
+    .chapter-eyebrow span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-red-bright);
+      box-shadow: 0 0 8px var(--accent-red-bright);
+    }
+    .chapter-title {
+      font-size: clamp(22px, 2.4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .chapter-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-top: 6px;
+      line-height: 1.5;
+      max-width: 900px;
+    }
+
+    /* ADHD Minimal Grid System */
+    .adhd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .adhd-grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .adhd-grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .adhd-grid.cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @media (max-width: 1100px) {
+      .adhd-grid.cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 960px) {
+      .adhd-grid.cols-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 680px) {
+      .adhd-grid.cols-2,
+      .adhd-grid.cols-3,
+      .adhd-grid.cols-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ADHD Card */
+    .adhd-card {
+      background: #0e0e11;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .adhd-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-2px);
+    }
+    .adhd-card.highlight {
+      border-color: rgba(198, 49, 61, 0.45);
+      background: linear-gradient(180deg, rgba(198, 49, 61, 0.08) 0%, #0e0e11 100%);
+    }
+
+    .adhd-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .adhd-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    /* Stat Badge */
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--red-badge-bg);
+      border: 1px solid rgba(198, 49, 61, 0.4);
+      color: var(--accent-red-bright);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .stat-badge.blue {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #60a5fa;
+    }
+    .stat-badge.green {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .stat-badge.amber {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+    .stat-badge.violet {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.4);
+      color: #c084fc;
+    }
+
+    /* ADHD Minimal List */
+    .adhd-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+    }
+    .adhd-list li {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.45;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .adhd-list li::before {
+      content: "-";
+      color: var(--accent-red-bright);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+    .adhd-list.check li::before {
+      content: "+";
+      color: #10b981;
+    }
+    .adhd-list.cross li::before {
+      content: "x";
+      color: #ef4444;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 64px 0 48px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-red-bright);
+      background: var(--red-badge-bg);
+      border: 1px solid rgba(198, 49, 61, 0.4);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+    }
+    .hero-tag span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-red-bright);
+      box-shadow: 0 0 8px var(--accent-red-bright);
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 24px;
+    }
+    .hero h1 .highlight {
+      color: var(--accent-red-bright);
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--text-dim);
+      max-width: 720px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Preserved Keyboard, Hand & Mouse Rig Styles */
+    .keyboard-stage {
+      margin-bottom: 0;
+      padding-bottom: 28px;
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+    }
+
+    .palm-rest-bar {
+      width: 100%;
+      height: clamp(28px, 3.4cqw, 42px);
+      margin-top: clamp(105px, 18cqw, 155px);
+      background: linear-gradient(180deg, #18181f 0%, #101015 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: clamp(6px, 0.75cqw, 10px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 16px rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(10px, 1.2cqw, 18px);
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .palm-rest-bar::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 15%;
+      width: 70%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
+    }
+    .palm-rest-left-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: clamp(7px, 0.72cqw, 9.5px);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .palm-rest-anchor-pip {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-red);
+      box-shadow: 0 0 6px var(--accent-red);
+    }
+    .palm-rest-carpal-zone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: clamp(6.5px, 0.65cqw, 8.5px);
+      color: rgba(255, 255, 255, 0.28);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Hand Overlay SVG Stage */
+    .hand-overlay-svg {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      overflow: visible;
+      /* Stop just below the wrist rest; preserve reaches above the keys. */
+      clip-path: inset(-1000px -1000px 0 -1000px);
+    }
+
+    .hand-reference-tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 10px 0 18px; color: #b7bec9; font: 12px var(--font-mono, monospace); }
+    .hand-reference-tools [hidden] { display: none; }
+    .hand-reference-tools label { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+    .hand-reference-tools input { accent-color: #bdc9d8; }
+    .hand-reference-tools input[type="range"] { width: 100px; }
+    .hand-photo-frame { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 11; }
+    .hand-photo-reference { position: absolute; left: 0; top: 0; width: 1368px; height: 1824px; max-width: none; transform-origin: 0 0; z-index: 11; pointer-events: none; display: none; }
+    .keyboard-stage.show-photo .hand-photo-reference { display: block; }
+    .keyboard-stage.show-photo #hand-surface { opacity: 0.45; }
+    .keyboard-stage.show-photo #photo-trace-outline { opacity: 1; }
+    .hand-moving-contour { display: none; pointer-events: none; }
+    #photo-trace-outline { display: none; pointer-events: none; }
+    /* One composite surface: overlapping anatomical lobes share one fill,
+       so finger roots have neither seams nor doubled transparency. */
+    #hand-palm, #handFingerBodiesGroup { opacity: 0; }
+    /* The user's supplied silhouette is the visible geometry, unchanged. */
+    #handSplinesGroup, #fingertipPadsGroup, #fingertipCoresGroup { display: none; }
+    .hand-joint-detail { fill: none; stroke: rgba(218, 229, 242, 0.25); stroke-width: 1; pointer-events: none; }
+    #hand-surface {
+      opacity: 0.72;
+      fill: url(#hand-glass);
+      fill-rule: nonzero;
+      pointer-events: none;
+    }
+
+    /* Overlap the antialiased edges using the same shared paint. Opacity
+       stays on the parent group, so joins do not darken during overlap. */
+    #hand-surface > path {
+      stroke: url(#hand-glass);
+      stroke-width: 1.2px;
+      stroke-linejoin: round;
+      paint-order: stroke fill;
+    }
+
+    /* Glass Palm Silhouette & Structural Architecture */
+    .hand-palm-silhouette {
+      fill: rgba(22, 22, 30, 0.35);
+      stroke: rgba(255, 70, 85, 0.65);
+      stroke-width: 2.4px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.65));
+      pointer-events: none;
+    }
+
+    .palm-knuckle-bar {
+      pointer-events: none;
+      fill: none;
+      stroke: transparent;
+      opacity: 0;
+    }
+
+    .palm-wrist-bar {
+      pointer-events: none;
+      stroke: transparent;
+      opacity: 0;
+    }
+
+    .palm-strut {
+      pointer-events: none;
+      stroke: transparent;
+      opacity: 0;
+    }
+
+    /* Volumetric Anatomical Finger Capsules */
+    .finger-body {
+      pointer-events: none;
+      fill: rgba(18, 18, 24, 0.42);
+      stroke-width: 2.2px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.5));
+      transition: stroke 0.12s ease, fill 0.12s ease, stroke-width 0.12s ease, filter 0.12s ease;
+    }
+
+    .finger-body-pinky { stroke: rgba(245, 158, 11, 0.85); }
+    .finger-body-ring { stroke: rgba(59, 130, 246, 0.85); }
+    .finger-body-middle { stroke: rgba(16, 185, 129, 0.85); }
+    .finger-body-index { stroke: rgba(255, 70, 85, 0.85); }
+    .finger-body-thumb { stroke: rgba(139, 92, 246, 0.85); }
+
+    .finger-body.is-active {
+      fill: rgba(28, 28, 38, 0.65);
+      stroke-width: 3.2px;
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    /* Skeletal Splines (Central Tendons) */
+    .finger-spline {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.12);
+      stroke-width: clamp(1.5px, 0.2cqw, 2px);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+      opacity: 0;
+      transition: stroke 0.12s ease, opacity 0.12s ease;
+    }
+    .finger-spline.active-spline {
+      stroke-width: 1px;
+      opacity: 0.25;
+    }
+    #finger-spline-pinky.active-spline { stroke: rgba(245, 158, 11, 0.7); }
+    #finger-spline-ring.active-spline { stroke: rgba(59, 130, 246, 0.7); }
+    #finger-spline-middle.active-spline { stroke: rgba(16, 185, 129, 0.7); }
+    #finger-spline-index.active-spline { stroke: rgba(255, 70, 85, 0.7); }
+    #finger-spline-thumb.active-spline { stroke: rgba(139, 92, 246, 0.7); }
+
+    /* MCP Knuckles */
+    .mcp-knuckle {
+      fill: transparent;
+      stroke: transparent;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Fingertip Nodes & Glowing Accents */
+    .fingertip-halo {
+      opacity: 0.75;
+      pointer-events: none;
+      transition: r 0.12s ease, opacity 0.12s ease;
+    }
+    .fingertip-pad {
+      pointer-events: none;
+      fill: none;
+      stroke-width: 1.5px;
+      opacity: 0.7;
+    }
+    .fingertip-core {
+      pointer-events: none;
+      opacity: 0;
+    }
+    .fingertip-halo {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    #fingertip-pinky { stroke: #f59e0b; }
+    #fingertip-ring { stroke: #3b82f6; }
+    #fingertip-middle { stroke: #10b981; }
+    #fingertip-index { stroke: #ff4655; }
+    #fingertip-thumb { stroke: #8b5cf6; }
+
+    .fingertip-pad.is-pressed {
+      stroke-width: 3.5px;
+      fill: rgba(30, 30, 40, 0.30);
+    }
+
+    /* Keyboard Layout Grid */
+    .keyboard-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(4px, 0.55cqw, 8px);
+      margin: 0;
+    }
+    .kb-row {
+      display: flex;
+      gap: clamp(4px, 0.55cqw, 8px);
+      align-items: center;
+    }
+    .key-cap {
+      position: relative;
+      height: clamp(38px, 4.6cqw, 62px);
+      border-radius: clamp(6px, 0.75cqw, 10px);
+      background: var(--key-base);
+      border: 1px solid var(--key-border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 10px rgba(0, 0, 0, 0.35);
+      flex: 0 0 calc(var(--u) * var(--w, 1) + clamp(4px, 0.55cqw, 8px) * (var(--w, 1) - 1));
+      padding: clamp(3px, 0.45cqw, 6px) clamp(4px, 0.6cqw, 8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      transition: transform 0.1s, border-color 0.15s, box-shadow 0.15s;
+      background-repeat: no-repeat !important;
+      background-clip: padding-box !important;
+    }
+    .key-cap:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+    .key-spacer {
+      flex: 0 0 calc(var(--u) * var(--w) + clamp(4px, 0.55cqw, 8px) * (var(--w) - 1));
+      height: 1px;
+      pointer-events: none;
+    }
+
+    .key-cap.unmapped {
+      opacity: 0.65;
+    }
+    .key-cap.unmapped:hover {
+      opacity: 0.9;
+    }
+
+    .key-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .key-id {
+      font-family: var(--font-mono);
+      font-size: clamp(7.5px, 0.8cqw, 10px);
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1px clamp(3px, 0.35cqw, 5px);
+      border-radius: 4px;
+    }
+    .key-action {
+      font-size: clamp(7.5px, 0.9cqw, 11px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+    }
+    .key-subtext {
+      font-size: clamp(6px, 0.65cqw, 8px);
+      font-family: var(--font-mono);
+      color: rgba(255, 255, 255, 0.65);
+      text-transform: uppercase;
+    }
+
+    /* Functional Color Classes */
+    .color-blue { background: linear-gradient(135deg, #1e3a8a, var(--color-blue)) !important; }
+    .color-green { background: linear-gradient(135deg, #065f46, var(--color-green)) !important; }
+    .color-red { background: linear-gradient(135deg, #7f1d1d, var(--color-red)) !important; }
+    .color-amber { background: linear-gradient(135deg, #78350f, var(--color-amber)) !important; }
+    .color-violet { background: linear-gradient(135deg, #4c1d95, var(--color-violet)) !important; }
+    .color-dark-green { background: linear-gradient(135deg, #14532d, #22c55e) !important; }
+
+    /* Footer */
+    footer {
+      margin-top: 80px;
+      text-align: center;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    footer a {
+      color: var(--accent-red-bright);
+      text-decoration: none;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 12px;
+      }
+      .chapter-frame {
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      .visualizer-outer {
+        padding: 10px;
+      }
+      .visualizer-inner {
+        padding: 10px;
+      }
+    }
+  
+    /* Key pressed live visual states */
+    .key-cap {
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
+    }
+    .key-cap:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    .key-cap.is-pressed {
+      transform: translateY(2px) scale(0.97);
+    }
+    .key-cap.color-green.is-pressed {
+      border-color: #10b981 !important;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.8), inset 0 0 8px rgba(16, 185, 129, 0.4) !important;
+    }
+    .key-cap.color-red.is-pressed {
+      border-color: #ff4655 !important;
+      box-shadow: 0 0 16px rgba(255, 70, 85, 0.8), inset 0 0 8px rgba(255, 70, 85, 0.4) !important;
+    }
+    .key-cap.color-amber.is-pressed {
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.8), inset 0 0 8px rgba(245, 158, 11, 0.4) !important;
+    }
+    .key-cap.color-violet.is-pressed {
+      border-color: #8b5cf6 !important;
+      box-shadow: 0 0 16px rgba(139, 92, 246, 0.8), inset 0 0 8px rgba(139, 92, 246, 0.4) !important;
+    }
+    .key-cap.color-blue.is-pressed {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.8), inset 0 0 8px rgba(59, 130, 246, 0.4) !important;
+    }
+    .key-cap.unmapped.is-pressed {
+      border-color: #ffffff !important;
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.6) !important;
+    }
+  
+
+    /* Visualizer & Hand Layout */
+    .visualizer-outer {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: clamp(14px, 2cqw, 24px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      margin-bottom: 40px;
+      overflow-x: auto;
+    }
+    .visualizer-inner {
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: clamp(16px, 2.2cqw, 28px);
+      container-type: inline-size;
+      min-width: 0;
+      width: 100%;
+      --u: clamp(24px, 3.85cqw, 52px);
+    }
+
+    /* 2-Column Split: Keyboard on Left, Mouse on Right */
+    .setup-split {
+      display: grid;
+      grid-template-columns: auto 1px 1fr;
+      gap: clamp(16px, 2.2cqw, 32px);
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .setup-col {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .keyboard-setup {
+      width: fit-content;
+    }
+
+    .mouse-setup {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .setup-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: clamp(9px, 0.85cqw, 11px);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: clamp(10px, 1.2cqw, 16px);
+      text-transform: uppercase;
+      width: 100%;
+    }
+    .setup-header span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-red-bright);
+      box-shadow: 0 0 6px var(--accent-red-bright);
+    }
+
+    /* Vertical Divider between Columns */
+    .setup-vertical-divider {
+      width: 1px;
+      background: linear-gradient(180deg, transparent, var(--border-bright) 10%, var(--border-bright) 90%, transparent);
+      opacity: 0.6;
+    }
+
+    /* Horizontal Column Divider under devices */
+    .col-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: clamp(16px, 2cqw, 24px) 0 clamp(14px, 1.8cqw, 20px);
+    }
+
+    /* Legend Grid under each device */
+    .legend-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: clamp(11px, 0.9cqw, 12.5px);
+      font-family: var(--font-mono);
+      color: #c7c7cc;
+      line-height: 1.4;
+    }
+    .legend-chip {
+      width: 13px;
+      height: 13px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    /* Clean Mouse Inside Desk Mat */
+    .mouse-container-mat {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    .mouse-container-mat .mouse-svg {
+      width: 100%;
+      max-width: clamp(220px, 26cqw, 350px);
+      height: auto;
+      filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.75));
+    }
+
+    @container (max-width: 780px) {
+      .setup-split {
+        grid-template-columns: 1fr;
+      }
+      .setup-vertical-divider {
+        display: none;
+      }
+      .keyboard-setup {
+        width: 100%;
+        overflow-x: auto;
+      }
+    }
+    /* Keyboard Layout Grid */
+    .keyboard-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(4px, 0.55cqw, 8px);
+      margin: 0;
+    }
+    .kb-row {
+      display: flex;
+      gap: clamp(4px, 0.55cqw, 8px);
+      align-items: center;
+    }
+    .key-cap {
+      position: relative;
+      height: clamp(38px, 4.6cqw, 62px);
+      border-radius: clamp(6px, 0.75cqw, 10px);
+      background: var(--key-base);
+      border: 1px solid var(--key-border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 10px rgba(0, 0, 0, 0.35);
+      flex: 0 0 calc(var(--u) * var(--w, 1) + clamp(4px, 0.55cqw, 8px) * (var(--w, 1) - 1));
+      padding: clamp(3px, 0.45cqw, 6px) clamp(4px, 0.6cqw, 8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      transition: transform 0.1s, border-color 0.15s, box-shadow 0.15s;
+      background-repeat: no-repeat !important;
+      background-clip: padding-box !important;
+    }
+    .key-cap:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+    .key-spacer {
+      flex: 0 0 calc(var(--u) * var(--w) + clamp(4px, 0.55cqw, 8px) * (var(--w) - 1));
+      height: 1px;
+      pointer-events: none;
+    }
+
+    .key-cap.unmapped {
+      opacity: 0.65;
+    }
+    .key-cap.unmapped:hover {
+      opacity: 0.9;
+    }
+
+    .key-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .key-id {
+      font-family: var(--font-mono);
+      font-size: clamp(7.5px, 0.8cqw, 10px);
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1px clamp(3px, 0.35cqw, 5px);
+      border-radius: 4px;
+    }
+    .key-action {
+      font-size: clamp(7.5px, 0.9cqw, 11px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+    }
+    .key-subtext {
+      font-size: clamp(6px, 0.65cqw, 8px);
+      font-family: var(--font-mono);
+      color: rgba(255, 255, 255, 0.65);
+      text-transform: uppercase;
+    }
+
+    /* Functional Color Classes */
+    .color-blue { background: linear-gradient(135deg, #1e3a8a, var(--color-blue)) !important; }
+    .color-green { background: linear-gradient(135deg, #065f46, var(--color-green)) !important; }
+    .color-red { background: linear-gradient(135deg, #7f1d1d, var(--color-red)) !important; }
+    .color-amber { background: linear-gradient(135deg, #78350f, var(--color-amber)) !important; }
+    .color-violet { background: linear-gradient(135deg, #4c1d95, var(--color-violet)) !important; }
+    .color-dark-green { background: linear-gradient(135deg, #14532d, #22c55e) !important; }
+
+    /* How to Play Section */
+    .guide-section {
+      margin-top: 64px;
+    }
+    .guide-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--red-badge-bg);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red-bright);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step-text {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 80px;
+      text-align: center;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    footer a {
+      color: var(--accent-red-bright);
+      text-decoration: none;
+    }
+
+    @media (max-width: 1024px) {
+      .bento-card.col-8, .bento-card.col-4, .bento-card.col-6 {
+        grid-column: span 12;
+      }
+      .mouse-layout {
+        grid-template-columns: 1fr;
+      }
+      .guide-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    #handOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    /* One composite surface: overlapping anatomical lobes share one fill,
+       so finger roots have neither seams nor doubled transparency. */
+    #hand-palm, #handFingerBodiesGroup { opacity: 0; }
+    /* The user's supplied silhouette is the visible geometry, unchanged. */
+    #handSplinesGroup, #fingertipPadsGroup, #fingertipCoresGroup { display: none; }
+    .hand-joint-detail { fill: none; stroke: rgba(218, 229, 242, 0.25); stroke-width: 1; pointer-events: none; }
+    #hand-surface {
+      fill: url(#hand-glass);
+      fill-rule: nonzero;
+      pointer-events: none;
+    }
+
+  </style>
+  <script src="assets/hand-rig.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="top-nav">
+      <a href="#" class="brand">
+        <span class="brand-badge">SYNDRA</span>
+        <span class="brand-name">PROJECT SYNDRA</span>
+      </a>
+      <div class="nav-links">
+        <a href="#ch1" class="nav-btn">Ch 1: QWERTY</a>
+        <a href="#ch2" class="nav-btn">Ch 2: WASD</a>
+        <a href="#ch3" class="nav-btn">Ch 3: EDSF</a>
+        <a href="#ch4" class="nav-btn">Ch 4: The Flaw</a>
+        <a href="#ch5" class="nav-btn">Ch 5: SYNDRA</a>
+        <a href="#ch6" class="nav-btn">Ch 6: Fixes</a>
+        <a href="#ch7" class="nav-btn">Ch 7: Trade-offs</a>
+        <a href="https://rgbproject.xyz" target="_blank" class="nav-btn nav-cta">RGB Project ↗</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-tag">
+        <span></span> ERGONOMIC VALORANT ARCHITECTURE
+      </div>
+      <h1>The 28-Year <span class="highlight">WASD Accident</span> Is Over.</h1>
+      <p>
+        PC gaming inherited controls built in 1993 to beat a brother in Doom deathmatches.
+        Project SYNDRA discards 150-year-old typewriter mechanics and builds tactical movement directly around human anatomy.
+      </p>
+
+      <!-- ADHD Quick-Read Executive Brief -->
+      <div class="adhd-summary-bar">
+        <div class="summary-chip">
+          <div class="summary-chip-num">1868</div>
+          <div class="summary-chip-label">Typewriter Jam Relic</div>
+          <p class="summary-chip-sub">QWERTY was built to prevent mechanical strike-arm jams. Modern gaming still inherits its staggered layout.</p>
+        </div>
+        <div class="summary-chip highlight-chip">
+          <div class="summary-chip-num">0&deg;</div>
+          <div class="summary-chip-label">Straight Wrist Alignment</div>
+          <p class="summary-chip-sub">Shifting to RTFG centers the left arm on your desk, eliminating 15&deg; to 30&deg; ulnar wrist twist and nerve compression.</p>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-chip-num">100%</div>
+          <div class="summary-chip-label">Continuous Strafe Uptime</div>
+          <p class="summary-chip-sub">The index finger handles Left (T) and Right (G). You never lift strafe fingers off movement to swap guns or ping.</p>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-chip-num">5 Keys</div>
+          <div class="summary-chip-label">Active Thumb Engine</div>
+          <p class="summary-chip-sub">Puts Primary, Pistol, Knife, Spike, and Crouch directly on your thumb instead of wasting it on an empty spacebar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 1: QWERTY & Failed Revolutions -->
+    <section class="chapter-frame" id="ch1">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow"><span></span> CHAPTER 01 // HISTORICAL ROOTS</div>
+        <h2 class="chapter-title">The 1868 Typewriter Trap &amp; Failed Alternatives</h2>
+        <p class="chapter-desc">Christopher Latham Sholes engineered QWERTY to keep Morse telegraph transcribers from jamming mechanical typewriters. Every ergonomic keyboard alternative failed against entrenched corporate habits.</p>
+      </div>
+      <div class="adhd-grid cols-3">
+        <!-- Card 1 -->
+        <div class="adhd-card highlight">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Sholes QWERTY (1868)</div>
+            <span class="stat-badge">32% Home Row</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Sholes arranged keys specifically to separate common English letter pairs.</li>
+            <li>Mechanical strike-arms jammed whenever typists struck neighboring arms in rapid succession.</li>
+            <li>Typists make only 32% of strokes on the resting home row.</li>
+            <li>Over 52% of keystrokes force awkward vertical leaps up to the top row.</li>
+            <li>The mechanical typewriter died a century ago, but PC gaming still runs on its jams.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Dvorak Simplified (1936)</div>
+            <span class="stat-badge green">70% Home Row</span>
+          </div>
+          <ul class="adhd-list">
+            <li>August Dvorak re-engineered key placement to keep 70% of strokes on the resting home row.</li>
+            <li>Grouped all vowels under the left hand to cut overall finger travel by two thirds.</li>
+            <li>Sixty years of entrenched corporate muscle memory blocked commercial adoption.</li>
+            <li>Typewriter factories refused to retool, and businesses rejected typist retraining costs.</li>
+            <li>Superior speed and ergonomics lost completely to industrial path dependency.</li>
+          </ul>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">The Strong Study (1956)</div>
+            <span class="stat-badge amber">Biased Report</span>
+          </div>
+          <ul class="adhd-list">
+            <li>The US General Services Administration funded an official study on Dvorak speed gains.</li>
+            <li>Lead researcher Earl Strong claimed Dvorak delivered zero practical typing improvements.</li>
+            <li>Independent historical audits later revealed Strong held severe bias and used flawed test controls.</li>
+            <li>Strong's disputed conclusion halted planned federal government typewriter conversions.</li>
+            <li>This single flawed report locked QWERTY into government and enterprise computing forever.</li>
+          </ul>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Colemak (2006)</div>
+            <span class="stat-badge blue">17 Key Delta</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Shai Coleman changed only 17 keys from standard QWERTY to ease the learning curve.</li>
+            <li>Preserved critical editing shortcuts intact, including undo, cut, copy, and paste.</li>
+            <li>Reduced overall finger travel distance below Dvorak benchmarks on modern text.</li>
+            <li>Operating systems excluded Colemak from pre-installed keyboard lists for over a decade.</li>
+            <li>Lacking native Windows and Mac support doomed it to niche enthusiast communities.</li>
+          </ul>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Simon RSTHD (2016)</div>
+            <span class="stat-badge violet">Thumb Key E</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Simon recognized the thumb as the hand's strongest digit and mapped letter E to it.</li>
+            <li>Moving the highest-frequency vowel to the thumb cut finger strain by nearly 40%.</li>
+            <li>Standard one-piece rectangular spacebars cannot split to fit extra thumb keys.</li>
+            <li>The layout required expensive custom split mechanical keyboards.</li>
+            <li>Hardware manufacturing limitations prevented adoption on standard laptops and office desks.</li>
+          </ul>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">The Industrial Rut</div>
+            <span class="stat-badge">Path Dependency</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Superior typing layouts consistently lost to manufacturing inertia and legacy habits.</li>
+            <li>PC gaming inherited standard office keyboards without testing them for competitive play.</li>
+            <li>Competitive shooters demand millisecond reflexes, yet players still run on an 1868 telegraph layout.</li>
+            <li>Overwriting 28 years of gaming habit requires intentional, systematic ergonomic design.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 2: The 1997 Accident -->
+    <section class="chapter-frame" id="ch2">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow"><span></span> CHAPTER 02 // GAMING GENESIS</div>
+        <h2 class="chapter-title">The 1997 Accident: How One LAN Match Froze PC Gaming</h2>
+        <p class="chapter-desc">A 1993 sibling rivalry in Doom established WASD. A Quake tournament championship codified it into universal gaming law.</p>
+      </div>
+      <div class="adhd-grid cols-3">
+        <!-- Card 1 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Dennis 'Thresh' Fong (1993)</div>
+            <span class="stat-badge amber">Doom Deathmatch</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Dennis Fong originally played early FPS deathmatches using the arrow keys.</li>
+            <li>After repeatedly losing Doom matches to his brother Lyle, Fong searched for an edge.</li>
+            <li>He shifted his left hand to WASD to keep his right hand locked onto the mouse.</li>
+            <li>Fong picked WASD as a quick LAN workaround, not an anatomical design.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="adhd-card highlight">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Red Annihilation (1997)</div>
+            <span class="stat-badge">Carmack's Ferrari</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Fong won John Carmack's twin-turbo Ferrari 328 at the historic 1997 Quake tournament.</li>
+            <li>Competitive gamers worldwide copied the champion's config file down to the exact keybind.</li>
+            <li>Gaming publications printed Fong's config as the definitive competitive setup.</li>
+            <li>A spontaneous tournament setup instantly froze into competitive PC gaming gospel.</li>
+          </ul>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Carmack &amp; Quake II (1997)</div>
+            <span class="stat-badge blue">Hardcoded Law</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Carmack saw Fong's victory and hardcoded WASD directly into the Quake II default config.</li>
+            <li>Valve followed suit with Half-Life in 1998, locking WASD across millions of home PCs.</li>
+            <li>No engineer ever verified if WASD fit the human hand; the industry just followed Carmack.</li>
+            <li>For twenty-eight years, every major PC shooter has shipped with this accidental default.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 3: EDSF: The Incomplete Step -->
+    <section class="chapter-frame" id="ch3">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow"><span></span> CHAPTER 03 // THE HALF-MEASURE</div>
+        <h2 class="chapter-title">EDSF: The Incomplete Evolutionary Step</h2>
+        <p class="chapter-desc">Shifting one column right unlocks surrounding keys, but leaves foundational biomechanical flaws untouched.</p>
+      </div>
+      <div class="adhd-grid cols-2">
+        <!-- Card 1 -->
+        <div class="adhd-card highlight">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Rightward Shift Advantages</div>
+            <span class="stat-badge green">+6 Left Keys</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>EDSF shifts the left hand one column to the right, landing the index finger on tactile home F.</li>
+            <li>Opens up six auxiliary keys on the left flank (Q, A, Z, W, S, X) for abilities and pings.</li>
+            <li>Players gain valuable peripheral binds without lifting their hand off the movement cluster.</li>
+            <li>Lets you switch back to normal touch typing during office work.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">The Unsolved Biomechanic Flaw</div>
+            <span class="stat-badge">Same Tendon Trap</span>
+          </div>
+          <ul class="adhd-list cross">
+            <li>The thing is, shifting right leaves the fundamental biomechanical problem untouched.</li>
+            <li>The wrist still angles unnaturally toward the desk corner in severe ulnar deviation.</li>
+            <li>The middle finger still jumps between Forward and Backward on a staggered diagonal.</li>
+            <li>The thumb still sits wasted on a giant empty spacebar doing nothing but jumping.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 4: The Flaw: Biomechanical Collision -->
+    <section class="chapter-frame" id="ch4">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow"><span></span> CHAPTER 04 // ANATOMICAL ANALYSIS</div>
+        <h2 class="chapter-title">The Biomechanical Collision: Hand Anatomy vs WASD</h2>
+        <p class="chapter-desc">Mud tested Reisshub WSQA and identified severe joint fatigue. Standard keyboard layouts violate human movement physics.</p>
+      </div>
+      <div class="adhd-grid cols-2">
+        <!-- Card 1 -->
+        <div class="adhd-card highlight">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Mud's Empirical Field Testing</div>
+            <span class="stat-badge">Flat 0&deg; Setup</span>
+          </div>
+          <ul class="adhd-list cross">
+            <li>Mud tested the Reisshub WSQA layout across live Valorant tournament and ranked lobbies.</li>
+            <li>Excessive finger curling caused severe tendon fatigue within forty-five minutes of scrims.</li>
+            <li>Forcing digits into tight, unnatural claws spikes joint tension and degrades micro-aim.</li>
+            <li>Real tournament play proves theoretical layouts fail when they force unnatural hand curls.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Diagonal Shear Stress</div>
+            <span class="stat-badge amber">Typewriter Stagger</span>
+          </div>
+          <ul class="adhd-list cross">
+            <li>The human hand naturally articulates in straight, parallel lines from knuckle to tip.</li>
+            <li>Typewriter key stagger forces the middle finger to jump diagonally between Forward (W) and Back (S).</li>
+            <li>This diagonal motion creates lateral shear across the extensor tendons during intense gunfights.</li>
+            <li>Over hours of competitive play, diagonal shearing inflames tendon sheaths and slows reflexes.</li>
+          </ul>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Ulnar Deviation &amp; Carpal Pinch</div>
+            <span class="stat-badge">15&deg; to 30&deg; Bend</span>
+          </div>
+          <ul class="adhd-list cross">
+            <li>Corner WASD placement forces the wrist to kink outward between 15&deg; and 30&deg;.</li>
+            <li>This unnatural bend narrows the carpal tunnel and pinches the median nerve under load.</li>
+            <li>Long competitive sessions with a kinked wrist lead directly to chronic wrist pain and numbness.</li>
+            <li>Players compensate by angling keyboards sideways, creating shoulder asymmetry and neck strain.</li>
+          </ul>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">The Wasted Thumb Asset</div>
+            <span class="stat-badge violet">Single Spacebar</span>
+          </div>
+          <ul class="adhd-list cross">
+            <li>The human thumb is the strongest, most mobile digit on your entire hand.</li>
+            <li>Traditional WASD leaves the thumb idling on a massive spacebar doing only one simple action: jump.</li>
+            <li>Wasting the thumb overloads the index and ring fingers with weapon swaps, abilities, and pings.</li>
+            <li>When your movement fingers leave WASD to swap guns, your character freezes in place.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+<section class="chapter-frame" id="ch5">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow"><span></span> CHAPTER 05 // THE SOLUTION</div>
+        <h2 class="chapter-title">Project SYNDRA: Unified Ergonomic Architecture</h2>
+        <p class="chapter-desc">Apex Pro Compact and decoupled precision mouse aligned on one synchronized competitive setup.</p>
+      </div>
+
+    <!-- Double-Bezel Visualizer Outer -->
+    <div class="visualizer-outer">
+      <div class="visualizer-inner" id="visualizerCanvas">
+        <div class="setup-split">
+          <!-- Left: Keyboard Zone & Legend -->
+          <div class="setup-col keyboard-setup">
+            <div class="setup-header">
+              <span></span> Left Hand Architecture // Apex Pro Compact
+            </div>
+            <div class="hand-reference-tools">
+              <label><input type="checkbox" id="handPhotoToggle"> Compare with my photo</label>
+              <label id="handPhotoOpacityLabel" hidden>Photo <input type="range" id="handPhotoOpacity" min="10" max="90" value="55" aria-label="Reference photo opacity"></label>
+            </div>
+            <div class="keyboard-stage" id="keyboardStage">
+              <div class="hand-photo-frame"><img id="handPhotoReference" class="hand-photo-reference" src="assets/hand-reference.jpg" alt="Original hand photograph aligned to the five resting keys" draggable="false"></div>
+              <div class="keyboard-wrapper" id="keyboardContainer">
+                <!-- Populated by JS -->
+              </div>
+              <div class="palm-rest-bar" id="palmRestBar">
+                <div class="palm-rest-left-badge">
+                  <span class="palm-rest-anchor-pip"></span>
+                  <span>CARPAL REST // APEX PRO COMPACT</span>
+                </div>
+                <div class="palm-rest-carpal-zone">
+                  <span>DESK BASELINE ANCHOR</span>
+                </div>
+              </div>
+              <svg class="hand-overlay-svg" id="handOverlay" aria-hidden="true">
+                <defs>
+                  <!-- Soft Radial Glow Filters -->
+                  <filter id="glow-filter-pinky" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <filter id="glow-filter-ring" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <filter id="glow-filter-middle" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <filter id="glow-filter-index" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <filter id="glow-filter-thumb" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <!-- Radial Gradients for Glow Halos -->
+                  <radialGradient id="radial-glow-pinky">
+                    <stop offset="0%" stop-color="#ffd84d" stop-opacity="0.65" />
+                    <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="radial-glow-ring">
+                    <stop offset="0%" stop-color="#4f8cff" stop-opacity="0.65" />
+                    <stop offset="60%" stop-color="#3b82f6" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="radial-glow-middle">
+                    <stop offset="0%" stop-color="#34d399" stop-opacity="0.65" />
+                    <stop offset="60%" stop-color="#10b981" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="radial-glow-index">
+                    <stop offset="0%" stop-color="#ff4655" stop-opacity="0.65" />
+                    <stop offset="60%" stop-color="#ef4444" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="radial-glow-thumb">
+                    <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.65" />
+                    <stop offset="60%" stop-color="#8b5cf6" stop-opacity="0.3" />
+                    <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+
+                <!-- Hand Palm Silhouette & Architecture Group -->
+                <g id="handPalmGroup">
+                  <path id="hand-palm" class="hand-palm-silhouette" d="" />
+                  <path id="palm-knuckle-bar" class="palm-knuckle-bar" d="" />
+                  <line id="palm-wrist-bar" class="palm-wrist-bar" x1="0" y1="0" x2="0" y2="0" />
+                  <line id="palm-strut-pinky" class="palm-strut" x1="0" y1="0" x2="0" y2="0" />
+                  <line id="palm-strut-ring" class="palm-strut" x1="0" y1="0" x2="0" y2="0" />
+                  <line id="palm-strut-middle" class="palm-strut" x1="0" y1="0" x2="0" y2="0" />
+                  <line id="palm-strut-index" class="palm-strut" x1="0" y1="0" x2="0" y2="0" />
+                </g>
+
+                <!-- Volumetric Anatomical Finger Capsules -->
+                <g id="handFingerBodiesGroup">
+                  <path id="finger-body-pinky" class="finger-body finger-body-pinky" d="" />
+                  <path id="finger-body-ring" class="finger-body finger-body-ring" d="" />
+                  <path id="finger-body-middle" class="finger-body finger-body-middle" d="" />
+                  <path id="finger-body-index" class="finger-body finger-body-index" d="" />
+                  <path id="finger-body-thumb" class="finger-body finger-body-thumb" d="" />
+                </g>
+
+                <defs>
+                  <mask id="hand-union" maskUnits="userSpaceOnUse" x="-100%" y="-100%" width="300%" height="300%" style="mask-type: luminance">
+                    <path id="hand-union-palm" fill="white" />
+                    <path id="hand-union-pinky" fill="white" />
+                    <path id="hand-union-ring" fill="white" />
+                    <path id="hand-union-middle" fill="white" />
+                    <path id="hand-union-index" fill="white" />
+                    <path id="hand-union-thumb" fill="white" />
+                  </mask>
+                  <linearGradient id="hand-glass" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="460" y2="850">
+                    <stop offset="0" stop-color="#b8b6b5" stop-opacity="1" />
+                    <stop offset="0.55" stop-color="#81858d" stop-opacity="1" />
+                    <stop offset="1" stop-color="#4d5663" stop-opacity="1" />
+                  </linearGradient>
+                </defs>
+                <g id="hand-surface" aria-hidden="true">
+                  <path id="hand-part-palm" data-part="palm" />
+                  <path id="hand-part-pinky" data-part="pinky" />
+                  <path id="hand-part-ring" data-part="ring" />
+                  <path id="hand-part-middle" data-part="middle" />
+                  <path id="hand-part-index" data-part="index" />
+                  <path id="hand-part-thumb" data-part="thumb" />
+                </g>
+                <g aria-hidden="true">
+                  <path id="hand-detail-pinky" class="hand-joint-detail" />
+                  <path id="hand-detail-ring" class="hand-joint-detail" />
+                  <path id="hand-detail-middle" class="hand-joint-detail" />
+                  <path id="hand-detail-index" class="hand-joint-detail" />
+                  <path id="hand-detail-thumb" class="hand-joint-detail" />
+                </g>
+                <g aria-hidden="true">
+                  <path id="moving-contour-pinky" class="hand-moving-contour" />
+                  <path id="moving-contour-ring" class="hand-moving-contour" />
+                  <path id="moving-contour-middle" class="hand-moving-contour" />
+                  <path id="moving-contour-index" class="hand-moving-contour" />
+                  <path id="moving-contour-thumb" class="hand-moving-contour" />
+                </g>
+                <path id="photo-trace-outline" d="" />
+                <!-- Skeletal Splines Group (Central Tendons) -->
+                <g id="handSplinesGroup">
+                  <path id="finger-spline-pinky" class="finger-spline" d="" />
+                  <path id="finger-spline-ring" class="finger-spline" d="" />
+                  <path id="finger-spline-middle" class="finger-spline" d="" />
+                  <path id="finger-spline-index" class="finger-spline" d="" />
+                  <path id="finger-spline-thumb" class="finger-spline" d="" />
+                </g>
+
+                <!-- MCP Knuckles Group -->
+                <g id="handKnucklesGroup">
+                  <circle id="knuckle-pinky" class="mcp-knuckle" r="4.5" />
+                  <circle id="knuckle-ring" class="mcp-knuckle" r="4.5" />
+                  <circle id="knuckle-middle" class="mcp-knuckle" r="5" />
+                  <circle id="knuckle-index" class="mcp-knuckle" r="4.5" />
+                  <circle id="knuckle-thumb" class="mcp-knuckle" r="5" />
+                </g>
+
+                <!-- Fingertip Glow Halos -->
+                <g id="fingertipHalosGroup">
+                  <circle id="fingertip-halo-pinky" class="fingertip-halo" r="17" fill="url(#radial-glow-pinky)" />
+                  <circle id="fingertip-halo-ring" class="fingertip-halo" r="17" fill="url(#radial-glow-ring)" />
+                  <circle id="fingertip-halo-middle" class="fingertip-halo" r="17" fill="url(#radial-glow-middle)" />
+                  <circle id="fingertip-halo-index" class="fingertip-halo" r="17" fill="url(#radial-glow-index)" />
+                  <circle id="fingertip-halo-thumb" class="fingertip-halo" r="17" fill="url(#radial-glow-thumb)" />
+                </g>
+
+                <!-- Primary Fingertip Pads (Required IDs) -->
+                <g id="fingertipPadsGroup">
+                  <circle id="fingertip-pinky" class="fingertip-pad" data-finger="pinky" r="10" />
+                  <circle id="fingertip-ring" class="fingertip-pad" data-finger="ring" r="10" />
+                  <circle id="fingertip-middle" class="fingertip-pad" data-finger="middle" r="10" />
+                  <circle id="fingertip-index" class="fingertip-pad" data-finger="index" r="10" />
+                  <circle id="fingertip-thumb" class="fingertip-pad" data-finger="thumb" r="10" />
+                </g>
+
+                <!-- Tactile Fingertip Cores -->
+                <g id="fingertipCoresGroup">
+                  <circle id="fingertip-core-pinky" class="fingertip-core" r="3.5" fill="#ffd84d" />
+                  <circle id="fingertip-core-ring" class="fingertip-core" r="3.5" fill="#4f8cff" />
+                  <circle id="fingertip-core-middle" class="fingertip-core" r="3.5" fill="#34d399" />
+                  <circle id="fingertip-core-index" class="fingertip-core" r="3.5" fill="#ff4655" />
+                  <circle id="fingertip-core-thumb" class="fingertip-core" r="3.5" fill="#a78bfa" />
+                </g>
+              </svg>
+            </div>
+            <div class="col-divider"></div>
+            <div class="legend-grid">
+              <div class="legend-item">
+                <div class="legend-chip color-green"></div>
+                <div><strong>Middle Finger:</strong> Forward (R), Backward (F) & Defuse (4)</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip color-red"></div>
+                <div><strong>Index Finger:</strong> Strafe (T, G), Ping (H), Map (Y), Voice Comms</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip color-amber"></div>
+                <div><strong>Pinky Finger:</strong> Modifiers (Z Walk, Shift Cursor, S Shop, X Reload, A Caution, Alt)</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip color-violet"></div>
+                <div><strong>Thumb Cluster:</strong> Space (Crouch), N (Vandal), M (Pistol), B (Knife), , (Spike), V (Op Zoom)</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip color-blue"></div>
+                <div><strong>Tactical Utility:</strong> W (Use), E (Ult), D (PTT), C (Loadout), 1-3</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vertical Separation Divider -->
+          <div class="setup-vertical-divider"></div>
+
+          <!-- Right: Mouse Zone & Legend -->
+          <div class="setup-col mouse-setup" id="mouse">
+            <div class="setup-header">
+              <span></span> Right Hand Architecture // Decoupled Utility Mouse
+            </div>
+            <div class="mouse-container-mat">
+              <svg class="mouse-svg" viewBox="0 0 460 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <filter id="mouseShadow" x="-20%" y="-10%" width="140%" height="130%">
+                    <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.8"/>
+                  </filter>
+                  <linearGradient id="lmbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff944d"/>
+                    <stop offset="100%" stop-color="#ea580c"/>
+                  </linearGradient>
+                  <linearGradient id="rmbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#a78bfa"/>
+                    <stop offset="100%" stop-color="#6d28d9"/>
+                  </linearGradient>
+                  <linearGradient id="sideGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#10b981"/>
+                    <stop offset="100%" stop-color="#059669"/>
+                  </linearGradient>
+                  <filter id="whiteGlowFilter" filterUnits="userSpaceOnUse" x="0" y="0" width="500" height="600">
+                    <feGaussianBlur stdDeviation="2.0" result="blur"/>
+                  </filter>
+                </defs>
+
+                <!-- Mouse Silhouette Group (Logitech G Pro X Superlight Profile) -->
+                <g filter="url(#mouseShadow)">
+                  <!-- Base Shell -->
+                  <path d="M 180 35 
+                           C 210 31, 280 31, 310 35 
+                           C 360 42, 380 85, 380 160 
+                           C 380 235, 370 285, 367 335 
+                           C 363 395, 380 450, 340 488 
+                           C 310 512, 180 512, 150 488 
+                           C 110 450, 127 395, 123 335 
+                           C 120 285, 110 235, 110 160 
+                           C 110 85, 130 42, 180 35 Z" 
+                        fill="#131316" stroke="#242428" stroke-width="2"/>
+
+                  <!-- Ergonomic Palm Arc -->
+                  <path d="M 140 365 C 185 395, 305 395, 350 365" stroke="#1c1c20" stroke-width="2" fill="none"/>
+
+                  <!-- LMB Left Trigger Paddle (MB1) -->
+                  <g id="mouseBtnLmb" class="mouse-clickable-btn" data-mouse-btn="lmb">
+                    <path d="M 243 31 
+                             C 220 31, 200 32, 180 35 
+                             C 130 42, 110 85, 110 160 
+                             C 110 185, 111 210, 113 228 
+                             C 155 218, 205 218, 243 220 
+                             Z" 
+                          fill="url(#lmbGrad)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+                    <text x="178" y="125" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="800" text-anchor="middle" letter-spacing="0.02em" pointer-events="none">SHOOT</text>
+                    <text x="178" y="145" fill="rgba(255,255,255,0.85)" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle" pointer-events="none">LMB</text>
+                  </g>
+
+                  <!-- RMB Right Trigger Paddle (MB2) -->
+                  <g id="mouseBtnRmb" class="mouse-clickable-btn" data-mouse-btn="rmb">
+                    <path d="M 247 31 
+                             C 270 31, 290 32, 310 35 
+                             C 360 42, 380 85, 380 160 
+                             C 380 185, 379 210, 377 228 
+                             C 335 218, 285 218, 247 220 
+                             Z" 
+                          fill="url(#rmbGrad)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+                    <text x="312" y="125" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="800" text-anchor="middle" letter-spacing="0.02em" pointer-events="none">ALT FIRE</text>
+                    <text x="312" y="145" fill="rgba(255,255,255,0.85)" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle" pointer-events="none">RMB (ADS)</text>
+                  </g>
+
+                  <!-- Center Seam Gap Line -->
+                  <line x1="245" y1="31" x2="245" y2="70" stroke="#09090b" stroke-width="3" pointer-events="none"/>
+                  <line x1="245" y1="195" x2="245" y2="220" stroke="#09090b" stroke-width="3" pointer-events="none"/>
+
+                  <!-- Main Button Separation Arc (Shell Seam) -->
+                  <path d="M 113 228 C 170 218, 320 218, 377 228" stroke="#18181c" stroke-width="2.5" fill="none" pointer-events="none"/>
+
+                  <!-- Scroll Wheel Group (Clickable & Scrollable) -->
+                  <g id="mouseBtnWheel" class="mouse-clickable-btn" data-mouse-btn="wheel">
+                    <rect x="223" y="65" width="44" height="130" rx="14" fill="#08080a" stroke="#26262a" stroke-width="2"/>
+                    <rect x="228" y="70" width="34" height="120" rx="11" fill="#111114" stroke="#ff8a3d" stroke-width="2"/>
+                    <line x1="233" y1="84" x2="257" y2="84" stroke="#ff8a3d" stroke-width="2" stroke-opacity="0.6"/>
+                    <line x1="233" y1="96" x2="257" y2="96" stroke="#ff8a3d" stroke-width="2" stroke-opacity="0.6"/>
+                    <line x1="233" y1="164" x2="257" y2="164" stroke="#ff8a3d" stroke-width="2" stroke-opacity="0.6"/>
+                    <line x1="233" y1="176" x2="257" y2="176" stroke="#ff8a3d" stroke-width="2" stroke-opacity="0.6"/>
+                    <!-- Wheel Middle Click Block (DROP) -->
+                    <rect x="232" y="116" width="26" height="30" rx="5" fill="#ff8a3d" stroke="#ffffff" stroke-width="1" stroke-opacity="0.35"/>
+                    <text x="245" y="135" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="800" text-anchor="middle" pointer-events="none">DROP</text>
+                  </g>
+
+                  <!-- Side Button 1 (Front / MB5) -->
+                  <g id="mouseBtnMb5" class="mouse-clickable-btn" data-mouse-btn="mb5">
+                    <path d="M 115.6 240 
+                             C 109.5 240, 105.5 242.5, 106.1 247.0 
+                             C 107.6 259.0, 109.5 273.0, 111.2 283.5 
+                             C 111.6 286.0, 114.5 286.5, 120.7 286.5 
+                             L 120.7 281.0 
+                             C 118.5 268.0, 116.5 254.0, 115.6 240 Z" 
+                          fill="url(#sideGrad)" stroke="#10b981" stroke-width="1.5"/>
+                  </g>
+
+                  <!-- Side Button 2 (Rear / MB4) -->
+                  <g id="mouseBtnMb4" class="mouse-clickable-btn" data-mouse-btn="mb4">
+                    <path d="M 121.3 292 
+                             C 115.5 292, 111.2 293.5, 111.8 298.0 
+                             C 112.8 311.0, 114.2 325.0, 115.4 335.5 
+                             C 115.8 339.5, 119.5 340.0, 124.9 340.0 
+                             L 124.9 334.0 
+                             C 123.3 320.0, 122.0 306.0, 121.3 292 Z" 
+                          fill="url(#sideGrad)" stroke="#10b981" stroke-width="1.5"/>
+                  </g>
+
+                  <!-- Hardware Silhouette Label -->
+                  <text x="245" y="445" fill="rgba(255,255,255,0.22)" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="0.14em">PRO ESPORTS SILHOUETTE</text>
+                </g>
+
+                <!-- Outboard Callout Badges with Aligned Colors and Leader Lines -->
+
+                <!-- WHEEL UP: JUMP -->
+                <line x1="245" y1="70" x2="116" y2="70" stroke="#ffffff" stroke-width="8.0" opacity="0.75" filter="url(#whiteGlowFilter)"/>
+                <line x1="245" y1="70" x2="116" y2="70" stroke="#000000" stroke-width="3.2" stroke-dasharray="10 5"/>
+                <g id="mouseBadgeWheelUp" class="mouse-clickable-badge" data-mouse-btn="wheelup" transform="translate(18, 55)">
+                  <rect width="98" height="30" rx="6" fill="#141416" stroke="#ff8a3d" stroke-width="1.5"/>
+                  <text x="49" y="19" fill="#ff8a3d" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" text-anchor="middle" pointer-events="none">▲ JUMP</text>
+                </g>
+
+                <!-- WHEEL DOWN: USE -->
+                <line x1="245" y1="190" x2="348" y2="190" stroke="#ffffff" stroke-width="8.0" opacity="0.75" filter="url(#whiteGlowFilter)"/>
+                <line x1="245" y1="190" x2="348" y2="190" stroke="#000000" stroke-width="3.2" stroke-dasharray="10 5"/>
+                <g id="mouseBadgeWheelDown" class="mouse-clickable-badge" data-mouse-btn="wheeldown" transform="translate(348, 175)">
+                  <rect width="90" height="30" rx="6" fill="#141416" stroke="#ff8a3d" stroke-width="1.5"/>
+                  <text x="45" y="19" fill="#ff8a3d" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" text-anchor="middle" pointer-events="none">▼ USE</text>
+                </g>
+
+                <!-- SIDE BUTTON 1 (Ability 2) -->
+                <line x1="108" y1="263" x2="80" y2="263" stroke="#ffffff" stroke-width="8.0" opacity="0.75" filter="url(#whiteGlowFilter)"/>
+                <line x1="108" y1="263" x2="80" y2="263" stroke="#000000" stroke-width="3.2" stroke-dasharray="8 4"/>
+                <g id="mouseBadgeMb5" class="mouse-clickable-badge" data-mouse-btn="mb5" transform="translate(4, 249)">
+                  <rect width="76" height="28" rx="6" fill="#141416" stroke="#10b981" stroke-width="1.5"/>
+                  <text x="38" y="18" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="800" text-anchor="middle" pointer-events="none">ABL 2</text>
+                </g>
+
+                <!-- SIDE BUTTON 2 (Ability 3) -->
+                <line x1="113" y1="316" x2="80" y2="316" stroke="#ffffff" stroke-width="8.0" opacity="0.75" filter="url(#whiteGlowFilter)"/>
+                <line x1="113" y1="316" x2="80" y2="316" stroke="#000000" stroke-width="3.2" stroke-dasharray="8 4"/>
+                <g id="mouseBadgeMb4" class="mouse-clickable-badge" data-mouse-btn="mb4" transform="translate(4, 302)">
+                  <rect width="76" height="28" rx="6" fill="#141416" stroke="#10b981" stroke-width="1.5"/>
+                  <text x="38" y="18" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="800" text-anchor="middle" pointer-events="none">ABL 3</text>
+                </g>
+                            </svg>
+            </div>
+            <div class="col-divider"></div>
+            <!-- Mouse Legend in identical chip-and-text structure -->
+            <div class="legend-grid">
+              <div class="legend-item">
+                <div class="legend-chip" style="background: var(--color-orange);"></div>
+                <div><strong>LMB:</strong> Primary Shoot / Trigger Fire</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip" style="background: var(--color-violet);"></div>
+                <div><strong>RMB:</strong> Alt Shoot / Scope ADS (Operator Zoom)</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip" style="background: var(--color-orange);"></div>
+                <div><strong>Wheel ↑:</strong> Decoupled Jump (Bunny-Hop & Air Strafe)</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip" style="background: var(--color-orange);"></div>
+                <div><strong>Wheel ↓:</strong> Instant Use / Ninja Defuse Spike</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip" style="background: var(--color-orange);"></div>
+                <div><strong>Wheel Click:</strong> Drop Weapon / Pass Spike</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip" style="background: var(--color-green);"></div>
+                <div><strong>Side 1 (Front):</strong> Ability 2 (Flash / Smoke / Dash)</div>
+              </div>
+              <div class="legend-item">
+                <div class="legend-chip" style="background: var(--color-green);"></div>
+                <div><strong>Side 2 (Rear):</strong> Ability 3 (Recon Dart / Stun)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- Quick Step Flow inside Chapter 5 -->
+      <div class="adhd-grid cols-3" style="margin-top: 24px;">
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">1. Anchor Hand Position</div>
+            <span class="stat-badge green">RTFG Home</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Place middle finger on R and F.</li>
+            <li>Place index finger on strafe keys T and G.</li>
+            <li>Place ring finger on utility keys W, E, and D.</li>
+            <li>Rest pinky on walk key Z and reload key X.</li>
+          </ul>
+        </div>
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">2. Engage Thumb Weapons</div>
+            <span class="stat-badge violet">Spacebar Row</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Rest thumb on Spacebar for crouch control.</li>
+            <li>Tap N to pull your primary Vandal rifle.</li>
+            <li>Tap M to draw your secondary pistol.</li>
+            <li>Tap B for knife and comma (,) for spike.</li>
+          </ul>
+        </div>
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">3. Decouple Jump to Wheel</div>
+            <span class="stat-badge amber">Mouse Wheel</span>
+          </div>
+          <ul class="adhd-list">
+            <li>Flick Wheel Up to trigger jump and bunny-hops.</li>
+            <li>Flick Wheel Down for defuse and item interactions.</li>
+            <li>Click Wheel to drop weapons or pass spike.</li>
+            <li>Use thumb side buttons for abilities 2 and 3.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 6: Direct Fixes -->
+    <section class="chapter-frame" id="ch6">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow"><span></span> CHAPTER 06 // BIOMECHANICAL REMEDIATION</div>
+        <h2 class="chapter-title">Direct Fixes: What Project SYNDRA Solves</h2>
+        <p class="chapter-desc">Every architectural change resolves an anatomical flaw from the 1868 typewriter standard.</p>
+      </div>
+      <div class="adhd-grid cols-3">
+        <!-- Card 1 -->
+        <div class="adhd-card highlight">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">100% Strafe Mobility</div>
+            <span class="stat-badge green">Zero Combat Deadzones</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>The dedicated index finger handles Left (T) and Right (G) strafing independently.</li>
+            <li>You never lift your strafe fingers off movement to swap guns or ping enemies.</li>
+            <li>Thumb swaps rifles while movement fingers stay locked into unbroken counter-strafing.</li>
+            <li>Eliminates the split-second freeze that gets players killed during rifle duels.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Natural R-F Movement Line</div>
+            <span class="stat-badge blue">Zero Diagonal Shear</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>Forward (R) and Backward (F) align directly on a clean vertical biomechanical track.</li>
+            <li>The middle finger extends and retracts in a straight line without diagonal twisting.</li>
+            <li>Defuse and Plant sit naturally above Forward on Key 4 under the middle fingertip.</li>
+            <li>Eliminates extensor tendon strain and repetitive shear stress during long matches.</li>
+          </ul>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Straight 0&deg; Wrist Posture</div>
+            <span class="stat-badge green">Carpal Relief</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>Moving to RTFG centers the left hand naturally on your desk and mouse pad.</li>
+            <li>Your wrist stays perfectly straight with your forearm at flat 0&deg;.</li>
+            <li>Eliminates the 15&deg; to 30&deg; ulnar deviation kink, keeping the carpal tunnel wide open.</li>
+            <li>Prevents long-term repetitive strain injury, median nerve compression, and wrist numbness.</li>
+          </ul>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Five-Key Thumb Engine</div>
+            <span class="stat-badge violet">Instant Reflex Swaps</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>Your thumb operates Crouch on Space and controls the entire bottom row weapon cluster.</li>
+            <li>Key N equips primary rifle (Vandal) and Key M equips secondary pistol.</li>
+            <li>Key B equips melee knife, Key V toggles zoom, and Comma (,) equips the spike.</li>
+            <li>Weapon swaps execute in zero milliseconds without stopping counter-strafes.</li>
+          </ul>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Decoupled Mouse Jump</div>
+            <span class="stat-badge amber">Zero Left Hand Load</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>Decouples jumping completely from your movement hand to prevent thumb collision.</li>
+            <li>Mouse Wheel Up triggers frame-perfect bunny-hops with zero timing inconsistency.</li>
+            <li>Mouse Wheel Down grabs guns and executes ninja defuses without stopping air-strafes.</li>
+            <li>Frees the left hand to focus purely on surgical ground movement and peeking.</li>
+          </ul>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Balanced Five-Digit Workload</div>
+            <span class="stat-badge blue">No Finger Burnout</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>Spreads input load across all five digits instead of exhausting index and ring.</li>
+            <li>Assigns tactical roles based on anatomical muscle strength and natural reach.</li>
+            <li>Preserves fingertip agility and micro-reaction speeds through round thirty overtime.</li>
+            <li>Maximizes reachable actions directly from your natural hand resting anchor.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter 7: Trade-Off Analysis -->
+    <section class="chapter-frame" id="ch7">
+      <div class="chapter-header">
+        <div class="chapter-eyebrow"><span></span> CHAPTER 07 // EVALUATION</div>
+        <h2 class="chapter-title">Trade-Off Analysis: Engineering Pros &amp; Cons</h2>
+        <p class="chapter-desc">Objective analysis of competitive ergonomic gains against practical transition costs.</p>
+      </div>
+      <div class="adhd-grid cols-2">
+        <!-- Card 1: Pros -->
+        <div class="adhd-card highlight">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Ergonomic &amp; Tactical Wins</div>
+            <span class="stat-badge green">5 Core Gains</span>
+          </div>
+          <ul class="adhd-list check">
+            <li>Unbroken strafe agility during high-speed gunfights.</li>
+            <li>Instant reflex weapon access via the dedicated five-key thumb cluster.</li>
+            <li>Neutral 0&deg; wrist posture prevents ulnar twist and nerve compression.</li>
+            <li>Input load distributes across all five fingers instead of overloading three.</li>
+            <li>Straight vertical R-F movement eliminates diagonal typewriter tendon shear.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2: Cons -->
+        <div class="adhd-card">
+          <div class="adhd-card-header">
+            <div class="adhd-card-title">Adaptation &amp; Hardware Costs</div>
+            <span class="stat-badge">4 Adaptation Costs</span>
+          </div>
+          <ul class="adhd-list cross">
+            <li>Requires 7 to 21 days of deliberate motor retraining to overwrite WASD habits.</li>
+            <li>Requires manual key remapping in settings for every newly installed PC game.</li>
+            <li>Causes brief hesitation during in-game text chat until typing muscle memory adapts.</li>
+            <li>Stock keyboards feature long 6.25u spacebars instead of modern split thumb bars.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+    // Exact Apex Pro Compact SYNDRA Layout Data (Unused right keys cut)
+    const layoutData = [
+      // Function Row (Esc to F8)
+      [
+        { id: "Escape", label: "ESC", w: 1, action: "", sub: "" },
+        { spacer: true, w: 1 },
+        { id: "F1", label: "F1", w: 1, action: "", sub: "" },
+        { id: "F2", label: "F2", w: 1, action: "", sub: "" },
+        { id: "F3", label: "F3", w: 1, action: "", sub: "" },
+        { id: "F4", label: "F4", w: 1, action: "", sub: "" },
+        { spacer: true, w: 0.5 },
+        { id: "F5", label: "F5", w: 1, action: "", sub: "" },
+        { id: "F6", label: "F6", w: 1, action: "", sub: "" },
+        { id: "F7", label: "F7", w: 1, action: "", sub: "" },
+        { id: "F8", label: "F8", w: 1, action: "", sub: "" }
+      ],
+      // Number Row (` to 9)
+      [
+        { id: "Backquote", label: "`", w: 1, action: "CONSOLE", sub: "" },
+        { id: "Digit1", label: "1", w: 1, action: "GHOST", sub: "Utility", color: "color-blue" },
+        { id: "Digit2", label: "2", w: 1, action: "WHEEL", sub: "Ping", color: "color-blue" },
+        { id: "Digit3", label: "3", w: 1, action: "SCORE", sub: "Scoreboard", color: "color-blue" },
+        { id: "Digit4", label: "4", w: 1, action: "DEFUSE", sub: "Plant/Def", color: "color-green" },
+        { id: "Digit5", label: "5", w: 1, action: "ABL 1", sub: "Ability", bg: "linear-gradient(90deg, #065f46 0%, #065f46 50%, #7f1d1d 50%, #7f1d1d 100%)" },
+        { id: "Digit6", label: "6", w: 1, action: "PARTY PTT", sub: "Voice", color: "color-red" },
+        { id: "Digit7", label: "7", w: 1, action: "INSPECT", sub: "Weapon", color: "color-red" },
+        { id: "Digit8", label: "8", w: 1, action: "TEAM MUTE", sub: "Voice", color: "color-red" },
+        { id: "Digit9", label: "9", w: 1, action: "", sub: "" }
+      ],
+      // QWERTY Row (Tab to O)
+      [
+        { id: "Tab", label: "TAB", w: 1.5, action: "", sub: "" },
+        { id: "KeyQ", label: "Q", w: 1, action: "CHAT", sub: "Text" },
+        { id: "KeyW", label: "W", w: 1, action: "USE", sub: "Interact", color: "color-blue" },
+        { id: "KeyE", label: "E", w: 1, action: "ULT", sub: "Ultimate", color: "color-blue" },
+        { id: "KeyR", label: "R", w: 1, action: "UP", sub: "Forward", bg: "linear-gradient(90deg, #10b981 0%, #10b981 50%, #065f46 50%, #065f46 100%)" },
+        { id: "KeyT", label: "T", w: 1, action: "LEFT", sub: "Strafe L", bg: "linear-gradient(90deg, #ef4444 0%, #ef4444 50%, #7f1d1d 50%, #7f1d1d 100%)" },
+        { id: "KeyY", label: "Y", w: 1, action: "MAP", sub: "Radar", color: "color-red" },
+        { id: "KeyU", label: "U", w: 1, action: "PTY MUTE", sub: "Voice", color: "color-red" },
+        { id: "KeyI", label: "I", w: 1, action: "", sub: "" },
+        { id: "KeyO", label: "O", w: 1, action: "", sub: "" }
+      ],
+      // ASDF Row (Caps to L)
+      [
+        { id: "CapsLock", label: "CAPS", w: 1.75, action: "", sub: "" },
+        { id: "KeyA", label: "A", w: 1, action: "CAUTION", sub: "Ping", color: "color-amber" },
+        { id: "KeyS", label: "S", w: 1, action: "SHOP", sub: "Buy Menu", color: "color-amber" },
+        { id: "KeyD", label: "D", w: 1, action: "TEAM PTT", sub: "Voice", color: "color-blue" },
+        { id: "KeyF", label: "F", w: 1, action: "DOWN", sub: "Backward", color: "color-green" },
+        { id: "KeyG", label: "G", w: 1, action: "RIGHT", sub: "Strafe R", color: "color-red" },
+        { id: "KeyH", label: "H", w: 1, action: "PING", sub: "Tactical", color: "color-red" },
+        { id: "KeyJ", label: "J", w: 1, action: "", sub: "" },
+        { id: "KeyK", label: "K", w: 1, action: "", sub: "" },
+        { id: "KeyL", label: "L", w: 1, action: "", sub: "" }
+      ],
+      // ZXCV Row (Shift to Period)
+      [
+        { id: "ShiftLeft", label: "SHIFT", w: 2.25, action: "CURSOR", sub: "Toggle", color: "color-amber" },
+        { id: "KeyZ", label: "Z", w: 1, action: "WALK", sub: "Slow Walk", bg: "linear-gradient(90deg, #ffd84d 0%, #ffd84d 50%, #78350f 50%, #78350f 100%)" },
+        { id: "KeyX", label: "X", w: 1, action: "RELOAD", sub: "Ammo", color: "color-amber" },
+        { id: "KeyC", label: "C", w: 1, action: "LOADOUT", sub: "Buy/Inv", color: "color-blue" },
+        { id: "KeyV", label: "V", w: 1, action: "OP ZOOM", sub: "Sniper", color: "color-violet" },
+        { id: "KeyB", label: "B", w: 1, action: "KNIFE", sub: "Melee", color: "color-violet" },
+        { id: "KeyN", label: "N", w: 1, action: "VANDAL", sub: "Primary", bg: "linear-gradient(90deg, #8b5cf6 0%, #8b5cf6 50%, #3b1d82 50%, #3b1d82 100%)" },
+        { id: "KeyM", label: "M", w: 1, action: "PISTOL", sub: "Secondary", color: "color-violet" },
+        { id: "Comma", label: ",", w: 1, action: "SPIKE", sub: "DROP/PLANT", color: "color-violet" },
+        { id: "Period", label: ".", w: 1, action: "", sub: "" }
+      ],
+      // Bottom Thumb Row (Ctrl, Win, Alt, Space)
+      [
+        { id: "ControlLeft", label: "CTRL", w: 1.25, action: "", sub: "" },
+        { id: "MetaLeft", label: "WIN", w: 1.25, action: "", sub: "" },
+        { id: "AltLeft", label: "ALT", w: 1.25, action: "WATCHING", sub: "Ping", color: "color-amber" },
+        { id: "Space", label: "SPACE", w: 6.25, action: "CROUCH", sub: "Thumb", color: "color-violet" }
+      ]
+    ];
+
+    function renderKeyboard() {
+      const container = document.getElementById("keyboardContainer");
+      container.innerHTML = layoutData.map(row => {
+        const keysHtml = row.map(k => {
+          if (k.spacer) {
+            return `<div class="key-spacer" style="--w: ${k.w}"></div>`;
+          }
+          const isUnmapped = !k.action;
+          const colorClass = k.color || (isUnmapped ? "unmapped" : "");
+          const customBg = k.bg ? `background-image: ${k.bg}; background-repeat: no-repeat; background-clip: padding-box;` : "";
+          return `
+            <div class="key-cap ${colorClass}" data-key="${k.id}" style="--w: ${k.w}; ${customBg}">
+              <div class="key-header">
+                <span class="key-id">${k.label}</span>
+                ${k.sub ? `<span class="key-subtext">${k.sub}</span>` : ""}
+              </div>
+              ${k.action ? `<div class="key-action">${k.action}</div>` : ""}
+            </div>
+          `;
+        }).join("");
+        return `<div class="kb-row">${keysHtml}</div>`;
+      }).join("");
+    }
+
+    // Smooth Anchor Scroll Enhancement
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const targetId = this.getAttribute('href');
+        if (targetId && targetId.length > 1) {
+          const target = document.querySelector(targetId);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.pushState(null, null, targetId);
+          }
+        }
+      });
+    });
+
+    // Initialize
+    renderKeyboard();
+  
+    // Biomechanical Finger Map (Tactical Colored Binds Only)
+    const fingerMap = {
+      // Pinky (Amber)
+      ShiftLeft: { finger: "pinky", label: "Pinky Finger", role: "Cursor (Toggle)", color: "#f59e0b" },
+      ShiftRight: { finger: "pinky", label: "Pinky Finger", role: "Cursor (Toggle)", color: "#f59e0b" },
+      KeyA: { finger: "pinky", label: "Pinky Finger", role: "Caution Ping", color: "#f59e0b" },
+      KeyS: { finger: "pinky", label: "Pinky Finger", role: "Shop Menu", color: "#f59e0b" },
+      KeyZ: { finger: "pinky", label: "Pinky Finger", role: "Slow Walk", color: "#f59e0b" },
+      KeyX: { finger: "pinky", label: "Pinky Finger", role: "Reload", color: "#f59e0b" },
+      AltLeft: { finger: "pinky", label: "Pinky Finger", role: "Watching Ping", color: "#f59e0b" },
+
+      // Ring Finger / Tactical (Blue)
+      Digit1: { finger: "ring", label: "Ring Finger", role: "Ghost Utility", color: "#3b82f6" },
+      Digit2: { finger: "ring", label: "Ring Finger", role: "Wheel Ping", color: "#3b82f6" },
+      Digit3: { finger: "ring", label: "Ring Finger", role: "Scoreboard", color: "#3b82f6" },
+      KeyW: { finger: "ring", label: "Ring Finger", role: "Interact / Use", color: "#3b82f6" },
+      KeyE: { finger: "ring", label: "Ring Finger", role: "Ultimate Ability", color: "#3b82f6" },
+      KeyD: { finger: "ring", label: "Ring Finger", role: "Team Voice (PTT)", color: "#3b82f6" },
+      KeyC: { finger: "ring", label: "Ring Finger", role: "Buy / Loadout", color: "#3b82f6" },
+
+      // Middle Finger (Green - Primary Movement & Defuse)
+      Digit4: { finger: "middle", label: "Middle Finger", role: "Defuse / Plant", color: "#10b981" },
+      KeyR: { finger: "middle", label: "Middle Finger", role: "Forward (UP)", color: "#10b981" },
+      KeyF: { finger: "middle", label: "Middle Finger", role: "Backward (DOWN)", color: "#10b981" },
+
+      // Index Finger (Red - Strafe & Tactical Comms)
+      Digit5: { finger: "index", label: "Index Finger", role: "Ability 1", color: "#ff4655" },
+      Digit6: { finger: "index", label: "Index Finger", role: "Party Voice PTT", color: "#ff4655" },
+      Digit7: { finger: "index", label: "Index Finger", role: "Inspect Weapon", color: "#ff4655" },
+      Digit8: { finger: "index", label: "Index Finger", role: "Team Mute", color: "#ff4655" },
+      KeyT: { finger: "index", label: "Index Finger", role: "Strafe Left", color: "#ff4655" },
+      KeyG: { finger: "index", label: "Index Finger", role: "Strafe Right", color: "#ff4655" },
+      KeyY: { finger: "index", label: "Index Finger", role: "Map Radar", color: "#ff4655" },
+      KeyH: { finger: "index", label: "Index Finger", role: "Tactical Ping", color: "#ff4655" },
+      KeyU: { finger: "index", label: "Index Finger", role: "Party Mute", color: "#ff4655" },
+
+      // Thumb Cluster (Violet - Bottom Row Weapons & Crouch)
+      Space: { finger: "thumb", label: "Thumb Cluster", role: "Crouch (Jump On Mouse)", color: "#8b5cf6" },
+      KeyV: { finger: "thumb", label: "Thumb Cluster", role: "Operator Sniper Zoom", color: "#8b5cf6" },
+      KeyB: { finger: "thumb", label: "Thumb Cluster", role: "Melee Knife", color: "#8b5cf6" },
+      KeyN: { finger: "thumb", label: "Thumb Cluster", role: "Primary Vandal", color: "#8b5cf6" },
+      KeyM: { finger: "thumb", label: "Thumb Cluster", role: "Secondary Pistol", color: "#8b5cf6" },
+      Comma: { finger: "thumb", label: "Thumb Cluster", role: "Drop / Plant Spike", color: "#8b5cf6" }
+    };
+
+    // ==========================================
+    // CHAPTER 5: ERGONOMIC LEFT HAND OVERLAY ENGINE
+    // ==========================================
+
+    // Dynamic Key Center Lookup Cache
+    const keycapCenterCache = new Map();
+
+    function getKeyCenter(code) {
+      if (keycapCenterCache.has(code)) {
+        return keycapCenterCache.get(code);
+      }
+      const container = document.getElementById("keyboardContainer");
+      if (!container) return null;
+      const containerRect = container.getBoundingClientRect();
+
+      let keyEl = container.querySelector(`.key-cap[data-key="${code}"]`);
+      if (!keyEl) {
+        if (code === "Space") keyEl = container.querySelector(`.key-cap[data-key="Space"]`);
+        else if (code === "ShiftRight") keyEl = container.querySelector(`.key-cap[data-key="ShiftLeft"]`);
+        else if (code === "AltRight") keyEl = container.querySelector(`.key-cap[data-key="AltLeft"]`);
+        else if (code === "ControlRight") keyEl = container.querySelector(`.key-cap[data-key="ControlLeft"]`);
+        else if (code === "NumpadComma" || code === "Comma" || code === ",") keyEl = container.querySelector(`.key-cap[data-key="Comma"]`);
+        else if (code === "Digit4" || code === "4") keyEl = container.querySelector(`.key-cap[data-key="Digit4"]`);
+      }
+      if (!keyEl) return null;
+
+      const rect = keyEl.getBoundingClientRect();
+      const center = {
+        x: (rect.left - containerRect.left) + rect.width / 2,
+        y: (rect.top - containerRect.top) + rect.height / 2,
+        width: rect.width,
+        height: rect.height
+      };
+      keycapCenterCache.set(code, center);
+      return center;
+    }
+
+    function refreshKeycapCenterCache() {
+      keycapCenterCache.clear();
+      for (const code of Object.keys(fingerMap)) {
+        getKeyCenter(code);
+      }
+      getKeyCenter("Space");
+      getKeyCenter("ShiftLeft");
+      getKeyCenter("AltLeft");
+      getKeyCenter("Comma");
+      getKeyCenter("Digit4");
+    }
+
+    function getThumbHomePosition() {
+      const keyM = getKeyCenter("KeyM");
+      if (keyM) {
+        return { x: keyM.x, y: keyM.y };
+      }
+      return { x: 0, y: 0 };
+    }
+
+    function getTargetForCode(code) {
+      if (code === "Space") {
+        const space = getKeyCenter("Space");
+        const keyV = getKeyCenter("KeyV");
+        const keyB = getKeyCenter("KeyB");
+        if (space && keyV && keyB) {
+          return { x: (keyV.x + keyB.x) / 2, y: space.y };
+        }
+        return getKeyCenter("Space");
+      }
+      if (code === "ShiftRight") {
+        return getKeyCenter("ShiftLeft");
+      }
+      if (code === "NumpadComma" || code === ",") {
+        return getKeyCenter("Comma");
+      }
+      if (code === "4") {
+        return getKeyCenter("Digit4");
+      }
+      const center = getKeyCenter(code);
+      if (center) {
+        return { x: center.x, y: center.y };
+      }
+      return null;
+    }
+
+    // Biomechanical Finger State Object
+    const fingerState = {
+      pinky:  { current: { x: 0, y: 0 }, target: { x: 0, y: 0 }, home: { x: 0, y: 0 }, startPos: { x: 0, y: 0 }, activeKeys: new Set(), startTime: 0, duration: 120, isAnimating: false, color: "#f59e0b" },
+      ring:   { current: { x: 0, y: 0 }, target: { x: 0, y: 0 }, home: { x: 0, y: 0 }, startPos: { x: 0, y: 0 }, activeKeys: new Set(), startTime: 0, duration: 120, isAnimating: false, color: "#3b82f6" },
+      middle: { current: { x: 0, y: 0 }, target: { x: 0, y: 0 }, home: { x: 0, y: 0 }, startPos: { x: 0, y: 0 }, activeKeys: new Set(), startTime: 0, duration: 120, isAnimating: false, color: "#10b981" },
+      index:  { current: { x: 0, y: 0 }, target: { x: 0, y: 0 }, home: { x: 0, y: 0 }, startPos: { x: 0, y: 0 }, activeKeys: new Set(), startTime: 0, duration: 120, isAnimating: false, color: "#ff4655" },
+      thumb:  { current: { x: 0, y: 0 }, target: { x: 0, y: 0 }, home: { x: 0, y: 0 }, startPos: { x: 0, y: 0 }, activeKeys: new Set(), startTime: 0, duration: 120, isAnimating: false, color: "#8b5cf6" }
+    };
+
+    // Knuckles cache for kinematic spline and capsule generation
+    const cachedKnuckles = {
+      pinky: { x: 0, y: 0 },
+      ring: { x: 0, y: 0 },
+      middle: { x: 0, y: 0 },
+      index: { x: 0, y: 0 },
+      thumb: { x: 0, y: 0 }
+    };
+
+    // Proportional finger capsule widths (base, tip)
+    let cachedStageWidth = 600;
+    const cachedFingerWidths = {
+      pinky: { base: 20, tip: 17 },
+      ring: { base: 22, tip: 19 },
+      middle: { base: 25, tip: 22 },
+      index: { base: 25, tip: 22 },
+      thumb: { base: 26, tip: 23 }
+    };
+
+    // Spline curvature constants
+    const splineCurves = {
+      pinky: -0.18,
+      ring: -0.05,
+      middle: 0.04,
+      index: 0.12,
+      thumb: 0.28
+    };
+
+    // Cached SVG Elements for Zero-DOM-Query rAF Rendering
+    const fingerElements = {
+      pinky: { pad: null, halo: null, core: null, spline: null, body: null },
+      ring: { pad: null, halo: null, core: null, spline: null, body: null },
+      middle: { pad: null, halo: null, core: null, spline: null, body: null },
+      index: { pad: null, halo: null, core: null, spline: null, body: null },
+      thumb: { pad: null, halo: null, core: null, spline: null, body: null }
+    };
+
+    // Palm structural SVG elements cache
+    const palmElements = {
+      silhouette: null,
+      knuckleBar: null,
+      wristBar: null,
+      struts: { pinky: null, ring: null, middle: null, index: null }
+    };
+
+    function initFingerElements() {
+      for (const f of ["pinky", "ring", "middle", "index", "thumb"]) {
+        fingerElements[f].pad = document.getElementById(`fingertip-${f}`);
+        fingerElements[f].halo = document.getElementById(`fingertip-halo-${f}`);
+        fingerElements[f].core = document.getElementById(`fingertip-core-${f}`);
+        fingerElements[f].spline = document.getElementById(`finger-spline-${f}`);
+        fingerElements[f].body = document.getElementById(`finger-body-${f}`);
+      }
+      palmElements.silhouette = document.getElementById("hand-palm");
+      palmElements.knuckleBar = document.getElementById("palm-knuckle-bar");
+      palmElements.wristBar = document.getElementById("palm-wrist-bar");
+      palmElements.struts.pinky = document.getElementById("palm-strut-pinky");
+      palmElements.struts.ring = document.getElementById("palm-strut-ring");
+      palmElements.struts.middle = document.getElementById("palm-strut-middle");
+      palmElements.struts.index = document.getElementById("palm-strut-index");
+    }
+
+    // Expose Kinematics API contracts on window
+    window.fingerState = fingerState;
+    window.getKeyCenter = getKeyCenter;
+    window._handRafActive = false;
+
+    // Cubic Bezier Spline Generation for Central Tendons
+    function makeCubicSpline(kx, ky, tx, ty, curve = 0) {
+      const dx = tx - kx;
+      const dy = ty - ky;
+      const dist = Math.hypot(dx, dy);
+      const angle = Math.atan2(dy, dx);
+      const nx = -Math.sin(angle);
+      const ny = Math.cos(angle);
+
+      const c1x = kx + dx * 0.36 + nx * curve * dist * 0.15;
+      const c1y = ky + dy * 0.36 + ny * curve * dist * 0.15;
+      const c2x = kx + dx * 0.72 + nx * curve * dist * 0.08;
+      const c2y = ky + dy * 0.72 + ny * curve * dist * 0.08;
+
+      return `M ${kx.toFixed(1)} ${ky.toFixed(1)} C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${tx.toFixed(1)} ${ty.toFixed(1)}`;
+    }
+
+    // Traced in the supplied photo's EXIF-oriented 1368 x 1824 coordinates.
+    // Each digit has its own measured contour; no generic capsule is used.
+    const photoHand = {
+      pinky: { contact: [360,790], root: [280,1085], widthScale: 0.80, path: [
+        ["M",210,1115], ["C",209,1060,204,1005,228,951],
+        ["C",253,891,289,818,319,770], ["C",339,734,374,731,395,750],
+        ["C",413,769,397,811,377,854], ["C",356,905,333,946,328,980],
+        ["C",329,1020,338,1041,345,1055], ["Z"] ] },
+      ring: { contact: [553,763], root: [432,1110], widthScale: 0.86, path: [
+        ["M",345,1055], ["C",367,1005,389,955,430,864],
+        ["C",458,800,493,737,524,717], ["C",548,700,579,702,602,723],
+        ["C",624,746,603,798,578,850], ["C",547,924,515,1008,503,1070],
+        ["C",501,1080,500,1087,501,1090], ["Z"] ] },
+      middle: { contact: [698,736], root: [575,1110], widthScale: 0.93, path: [
+        ["M",501,1090], ["C",495,1040,522,961,560,865],
+        ["C",587,785,620,710,656,691], ["C",687,673,721,674,744,695],
+        ["C",769,717,748,775,728,831], ["C",698,915,673,1001,654,1080],
+        ["C",664,1078,674,1076,678,1070], ["Z"] ] },
+      index: { contact: [828,774], root: [730,1125], widthScale: 0.86, path: [
+        ["M",678,1070], ["C",699,1010,724,970,752,878],
+        ["C",772,814,782,751,793,728], ["C",816,703,848,706,869,729],
+        ["C",891,754,891,805,885,859], ["C",879,951,851,1053,837,1130],
+        ["C",830,1173,822,1199,820,1210], ["Z"] ] },
+      thumb: { contact: [952,1110], root: [867,1320], widthScale: 0.92, path: [
+        ["M",820,1210], ["C",839,1176,861,1155,884,1125],
+        ["C",906,1084,935,1054,961,1063], ["C",988,1069,996,1091,989,1126],
+        ["C",979,1168,979,1234,971,1274], ["C",964,1329,933,1384,886,1411], ["Z"] ] }
+    };
+    let photoTransform = [1,0,0,1,0,0];
+    const photoFingerNames = Object.keys(photoHand);
+    function photoPoint(x, y) {
+      const [a,b,c,d,e,f] = photoTransform;
+      return { x: a*x+c*y+e, y: b*x+d*y+f };
+    }
+    const vectorHandRig = new SilhouetteHandRig();
+    window.vectorHandRig = vectorHandRig;
+    const silhouetteContacts = [[224,220],[344,201],[431,185],[512,210],[594,421]];
+    function fitPhotoToHomes() {
+      // Least-squares affine registration is stable for the four near-collinear
+      // fingertips. The original image uses this exact same transform.
+      let rows = photoFingerNames.map(f => [...photoHand[f].contact, 1]);
+      const solve = axis => {
+        const matrix = [0,1,2].map(i => [0,1,2].map(j => rows.reduce((sum,r)=>sum+r[i]*r[j],0))
+          .concat(rows.reduce((sum,r,n)=>sum+r[i]*fingerState[photoFingerNames[n]].home[axis],0)));
+        for (let i=0;i<3;i++) {
+          let pivot=i;
+          for(let j=i+1;j<3;j++) if(Math.abs(matrix[j][i])>Math.abs(matrix[pivot][i])) pivot=j;
+          [matrix[i],matrix[pivot]]=[matrix[pivot],matrix[i]];
+          const divisor=matrix[i][i];
+          for(let k=i;k<4;k++) matrix[i][k]/=divisor;
+          for(let j=0;j<3;j++) if(j!==i) {
+            const factor=matrix[j][i];
+            for(let k=i;k<4;k++) matrix[j][k]-=factor*matrix[i][k];
+          }
+        }
+        return matrix.map(r=>r[3]);
+      };
+      const x=solve("x"), y=solve("y");
+      photoTransform=[x[0],y[0],x[1],y[1],x[2],y[2]];
+      document.getElementById("handPhotoReference").style.transform=`matrix(${photoTransform.join(",")})`;
+      rows = silhouetteContacts.map(p => [...p, 1]);
+      const sx=solve("x"), sy=solve("y");
+      vectorHandRig.calibrate([sx[0],sy[0],sx[1],sy[1],sx[2],sy[2]]);
+    }
+    function tracePath(commands, finger=null, tip=null) {
+      const spec = finger && photoHand[finger];
+      const anchor = spec && photoPoint(...spec.contact);
+      const vx = spec ? spec.contact[0]-spec.root[0] : 0;
+      const vy = spec ? spec.contact[1]-spec.root[1] : 0;
+      return commands.map(([cmd,...coords]) => cmd + " " + coords.reduce((out,value,i) => {
+        if(i%2) return out;
+        const px=value, py=coords[i+1];
+        let surfaceX=px, surfaceY=py;
+        if (spec) {
+          // Refine transverse width only; keep length, contact points and
+          // the approved palm/web junctions in their registered positions.
+          const length=Math.hypot(vx,vy), nx=-vy/length, ny=vx/length;
+          const along=((px-spec.root[0])*vx+(py-spec.root[1])*vy)/(length*length);
+          const blend=Math.max(0,Math.min(1,(along-0.30)/0.35));
+          const taper=blend*blend*(3-2*blend);
+          const across=(px-spec.root[0])*nx+(py-spec.root[1])*ny;
+          const inset=across*(1-spec.widthScale)*taper;
+          surfaceX-=nx*inset;
+          surfaceY-=ny*inset;
+        }
+        const mapped=photoPoint(surfaceX,surfaceY);
+        if(spec && tip) {
+          // Root stays fixed. Bend is distributed through the proximal and
+          // distal portions instead of stretching an entire straight rod.
+          const t=Math.max(0,Math.min(1,((px-spec.root[0])*vx+(py-spec.root[1])*vy)/(vx*vx+vy*vy)));
+          const bend=Math.max(0,(t-0.25)/0.75);
+          const weight=bend*bend*(3-2*bend);
+          mapped.x+=(tip.x-anchor.x)*weight;
+          mapped.y+=(tip.y-anchor.y)*weight;
+        }
+        out.push(mapped.x.toFixed(2),mapped.y.toFixed(2));
+        return out;
+      },[]).join(" ")).join(" ");
+    }
+    function makeFingerCapsule(kx, ky, tx, ty, wBase, wTip, finger) {
+      return tracePath(photoHand[finger].path, finger, {x:tx,y:ty});
+    }
+    function generatePalmPath() {
+      // Six cubics retain the palm path contract while following the photo.
+      return tracePath([
+        ["M",125,1660], ["C",220,1510,211,1380,212,1230],
+        ["C",205,1150,205,1090,242,1050],
+        ["C",345,1115,650,1090,795,1140],
+        ["C",823,1210,791,1300,835,1335],
+        ["C",943,1250,955,1418,830,1502],
+        ["C",755,1566,655,1640,550,1710], ["L",125,1660], ["Z"]
+      ]);
+    }
+    const photoToggle=document.getElementById("handPhotoToggle");
+    const photoOpacity=document.getElementById("handPhotoOpacity");
+    function updatePhotoComparison() {
+      document.getElementById("keyboardStage").classList.toggle("show-photo",photoToggle.checked);
+      document.getElementById("handPhotoOpacityLabel").hidden=!photoToggle.checked;
+      document.getElementById("handPhotoReference").style.opacity=Number(photoOpacity.value)/100;
+    }
+    photoToggle.checked=new URLSearchParams(location.search).has("handReference");
+    photoToggle.addEventListener("change",updatePhotoComparison);
+    photoOpacity.addEventListener("input",updatePhotoComparison);
+    updatePhotoComparison();
+
+    // High-Performance Zero-DOM-Read Spline, Capsule & Fingertip Renderer
+    function renderFingers() {
+      const rendered=vectorHandRig.render(fingerState);
+      for(const [part,d]of Object.entries(rendered.paths)){
+        document.getElementById(`hand-part-${part}`).setAttribute("d",d);
+      }
+      document.getElementById("photo-trace-outline").setAttribute("d",rendered.d);
+      for (const f of photoFingerNames) {
+        const state=fingerState[f],els=fingerElements[f],pos=state.current;
+        for (const el of [els.pad,els.halo,els.core]) if(el){el.setAttribute("cx",pos.x.toFixed(2));el.setAttribute("cy",pos.y.toFixed(2));}
+        if(els.spline)els.spline.setAttribute("d",makeCubicSpline(cachedKnuckles[f].x,cachedKnuckles[f].y,pos.x,pos.y,splineCurves[f]));
+        if(els.body)els.body.setAttribute("d",rendered.outlines[f]);
+        const contour=document.getElementById(`moving-contour-${f}`);
+        contour.setAttribute("d",rendered.outlines[f]);
+        contour.style.opacity=rendered.poses[f].movement>1?'0.65':'0';
+        document.getElementById(`hand-detail-${f}`).setAttribute("d",rendered.details[f]);
+      }
+    }
+
+    // Dynamic Geometry Update Routine
+    function updateHandOverlayGeometry() {
+      const stage = document.getElementById("keyboardStage");
+      const container = document.getElementById("keyboardContainer");
+      const palmRest = document.getElementById("palmRestBar");
+      const svg = document.getElementById("handOverlay");
+      if (!stage || !container || !palmRest || !svg) return;
+
+      const stageRect = stage.getBoundingClientRect();
+      if (stageRect.width === 0 || stageRect.height === 0) return;
+
+      svg.setAttribute("viewBox", `0 0 ${stageRect.width} ${stageRect.height}`);
+      cachedStageWidth = stageRect.width;
+
+      // Refresh cached centers for all mapped keys
+      refreshKeycapCenterCache();
+
+      // Compute baseline rest positions (Pinky: KeyZ, Ring: KeyD, Middle: KeyR, Index: KeyT, Thumb: Space)
+      const pHome = getKeyCenter("KeyZ") || { x: stageRect.width * 0.22, y: stageRect.height * 0.65 };
+      const rHome = getKeyCenter("KeyD") || { x: stageRect.width * 0.36, y: stageRect.height * 0.50 };
+      const mHome = getKeyCenter("KeyR") || { x: stageRect.width * 0.44, y: stageRect.height * 0.35 };
+      const iHome = getKeyCenter("KeyT") || { x: stageRect.width * 0.54, y: stageRect.height * 0.35 };
+      const tHome = getThumbHomePosition();
+
+      fingerState.pinky.home = { x: pHome.x, y: pHome.y };
+      fingerState.ring.home = { x: rHome.x, y: rHome.y };
+      fingerState.middle.home = { x: mHome.x, y: mHome.y };
+      fingerState.index.home = { x: iHome.x, y: iHome.y };
+      fingerState.thumb.home = { x: tHome.x, y: tHome.y };
+
+      // Update positions for each finger across viewport mutations
+      for (const f of ["pinky", "ring", "middle", "index", "thumb"]) {
+        const state = fingerState[f];
+        if (state.activeKeys.size === 0) {
+          if (!state.isAnimating) {
+            state.current = { ...state.home };
+            state.target = { ...state.home };
+          } else {
+            state.target = { ...state.home };
+          }
+        } else {
+          const keysArr = Array.from(state.activeKeys);
+          const latestKey = keysArr[keysArr.length - 1];
+          const targetCoord = getTargetForCode(latestKey);
+          if (targetCoord) {
+            state.target = { x: targetCoord.x, y: targetCoord.y };
+            if (!state.isAnimating) {
+              state.current = { x: targetCoord.x, y: targetCoord.y };
+            }
+          }
+        }
+      }
+
+      // Carpal Wrist Root anchored on palmRestBar across the biomechanical center
+      const palmRect = palmRest.getBoundingClientRect();
+      const wristY = (palmRect.top - stageRect.top) + palmRect.height * 0.48;
+      const keyFCenter = getKeyCenter("KeyF") || { x: mHome.x, y: rHome.y };
+      const keyGCenter = getKeyCenter("KeyG") || { x: iHome.x, y: rHome.y };
+      const wristX = (keyFCenter.x + keyGCenter.x) / 2;
+      const wristWidth = Math.max(140, Math.min(240, stageRect.width * 0.24));
+
+      // Calculate proportional capsule widths based on stage scale
+      const unitW = Math.max(26, Math.min(54, stageRect.width * 0.074));
+      cachedFingerWidths.pinky = { base: unitW * 0.85, tip: unitW * 0.72 };
+      cachedFingerWidths.ring = { base: unitW * 0.92, tip: unitW * 0.80 };
+      cachedFingerWidths.middle = { base: unitW * 1.02, tip: unitW * 0.88 };
+      cachedFingerWidths.index = { base: unitW * 1.02, tip: unitW * 0.88 };
+      cachedFingerWidths.thumb = { base: unitW * 1.08, tip: unitW * 0.92 };
+
+      fitPhotoToHomes();
+      for (const f of photoFingerNames) {
+        cachedKnuckles[f] = photoPoint(...photoHand[f].root);
+      }
+
+      // Update Knuckle positions in DOM
+      for (const [finger, pos] of Object.entries(cachedKnuckles)) {
+        const el = document.getElementById(`knuckle-${finger}`);
+        if (el) {
+          el.setAttribute("cx", pos.x.toFixed(1));
+          el.setAttribute("cy", pos.y.toFixed(1));
+        }
+      }
+
+      // Generate Stylized Dorsal Palm Silhouette
+      initFingerElements();
+      if (palmElements.silhouette) {
+        const palmD = generatePalmPath(wristX, wristY, wristWidth, cachedKnuckles.pinky, cachedKnuckles.ring, cachedKnuckles.middle, cachedKnuckles.index, cachedKnuckles.thumb);
+        palmElements.silhouette.setAttribute("d", palmD);
+      }
+
+      // Update Metacarpal Knuckle Bar
+      if (palmElements.knuckleBar) {
+        const barD = `M ${cachedKnuckles.pinky.x.toFixed(1)} ${cachedKnuckles.pinky.y.toFixed(1)} L ${cachedKnuckles.ring.x.toFixed(1)} ${cachedKnuckles.ring.y.toFixed(1)} L ${cachedKnuckles.middle.x.toFixed(1)} ${cachedKnuckles.middle.y.toFixed(1)} L ${cachedKnuckles.index.x.toFixed(1)} ${cachedKnuckles.index.y.toFixed(1)}`;
+        palmElements.knuckleBar.setAttribute("d", barD);
+      }
+
+      // Update Wrist Base Bar
+      const halfW = wristWidth * 0.5;
+      const wLeftX = wristX - halfW;
+      const wRightX = wristX + halfW;
+      const wBaseY = wristY + 4;
+      if (palmElements.wristBar) {
+        palmElements.wristBar.setAttribute("x1", wLeftX.toFixed(1));
+        palmElements.wristBar.setAttribute("y1", wBaseY.toFixed(1));
+        palmElements.wristBar.setAttribute("x2", wRightX.toFixed(1));
+        palmElements.wristBar.setAttribute("y2", wBaseY.toFixed(1));
+      }
+
+      // Update Internal Structural Struts
+      if (palmElements.struts.pinky) {
+        palmElements.struts.pinky.setAttribute("x1", wLeftX.toFixed(1));
+        palmElements.struts.pinky.setAttribute("y1", wBaseY.toFixed(1));
+        palmElements.struts.pinky.setAttribute("x2", cachedKnuckles.pinky.x.toFixed(1));
+        palmElements.struts.pinky.setAttribute("y2", cachedKnuckles.pinky.y.toFixed(1));
+      }
+      if (palmElements.struts.ring) {
+        palmElements.struts.ring.setAttribute("x1", (wLeftX + wristWidth * 0.28).toFixed(1));
+        palmElements.struts.ring.setAttribute("y1", wBaseY.toFixed(1));
+        palmElements.struts.ring.setAttribute("x2", cachedKnuckles.ring.x.toFixed(1));
+        palmElements.struts.ring.setAttribute("y2", cachedKnuckles.ring.y.toFixed(1));
+      }
+      if (palmElements.struts.middle) {
+        palmElements.struts.middle.setAttribute("x1", wristX.toFixed(1));
+        palmElements.struts.middle.setAttribute("y1", wBaseY.toFixed(1));
+        palmElements.struts.middle.setAttribute("x2", cachedKnuckles.middle.x.toFixed(1));
+        palmElements.struts.middle.setAttribute("y2", cachedKnuckles.middle.y.toFixed(1));
+      }
+      if (palmElements.struts.index) {
+        palmElements.struts.index.setAttribute("x1", wRightX.toFixed(1));
+        palmElements.struts.index.setAttribute("y1", wBaseY.toFixed(1));
+        palmElements.struts.index.setAttribute("x2", cachedKnuckles.index.x.toFixed(1));
+        palmElements.struts.index.setAttribute("y2", cachedKnuckles.index.y.toFixed(1));
+      }
+
+      renderFingers();
+    }
+    
+    const stageObserver = new ResizeObserver(() => {
+      updateHandOverlayGeometry();
+    });
+    const keyboardStage = document.getElementById("keyboardStage");
+    if (keyboardStage) {
+      stageObserver.observe(keyboardStage);
+    }
+    window.addEventListener("resize", () => {
+      updateHandOverlayGeometry();
+    });
+    if (document.fonts) {
+      document.fonts.ready.then(() => updateHandOverlayGeometry());
+    }
+    requestAnimationFrame(() => updateHandOverlayGeometry());
+
+    // Kinematic Animation Engine & rAF Loop
+    let handRafId = null;
+
+    function startAnimationLoop() {
+      if (window._handRafActive) return;
+      window._handRafActive = true;
+      handRafId = requestAnimationFrame(kinematicsTick);
+    }
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 2.6);
+    }
+
+    function kinematicsTick(now) {
+      let anyAnimating = false;
+
+      for (const f of ["pinky", "ring", "middle", "index", "thumb"]) {
+        const state = fingerState[f];
+        if (!state.isAnimating) {
+          const dx = state.target.x - state.current.x;
+          const dy = state.target.y - state.current.y;
+          if (Math.hypot(dx, dy) > 0.1) {
+            state.isAnimating = true;
+            state.startTime = now;
+            state.startPos = { ...state.current };
+          } else {
+            continue;
+          }
+        }
+
+        const elapsed = now - state.startTime;
+        const duration = state.duration || 120;
+        const progress = Math.min(1, Math.max(0, elapsed / duration));
+        const ease = easeOutCubic(progress);
+
+        const maxStep = 24.0;
+        const targetX = state.startPos.x + (state.target.x - state.startPos.x) * ease;
+        const targetY = state.startPos.y + (state.target.y - state.startPos.y) * ease;
+
+        const stepDx = targetX - state.current.x;
+        const stepDy = targetY - state.current.y;
+        const stepDist = Math.hypot(stepDx, stepDy);
+
+        if (stepDist > maxStep) {
+          state.current.x += (stepDx / stepDist) * maxStep;
+          state.current.y += (stepDy / stepDist) * maxStep;
+          anyAnimating = true;
+        } else {
+          state.current.x = targetX;
+          state.current.y = targetY;
+          if (progress >= 1) {
+            state.current.x = state.target.x;
+            state.current.y = state.target.y;
+            state.isAnimating = false;
+          } else {
+            anyAnimating = true;
+          }
+        }
+      }
+
+      renderFingers();
+
+      if (anyAnimating) {
+        handRafId = requestAnimationFrame(kinematicsTick);
+      } else {
+        // Sleep check: verify all fingers reached steady state
+        let stillMoving = false;
+        for (const f of ["pinky", "ring", "middle", "index", "thumb"]) {
+          const s = fingerState[f];
+          if (Math.hypot(s.target.x - s.current.x, s.target.y - s.current.y) > 0.1) {
+            stillMoving = true;
+            break;
+          }
+        }
+        if (stillMoving) {
+          handRafId = requestAnimationFrame(kinematicsTick);
+        } else {
+          window._handRafActive = false;
+          handRafId = null;
+        }
+      }
+    }
+
+    // High-Fidelity Tactical Audio Engine (Apex Pro Mechanical Switches & Esports Mouse)
+    const TacticalAudio = (function() {
+      let audioCtx = null;
+
+      function getContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function playKeyClick(code = "KeyA") {
+        try {
+          const ctx = getContext();
+          const now = ctx.currentTime;
+          const isSpace = code === "Space";
+          const isMod = ["ShiftLeft", "ShiftRight", "AltLeft", "AltRight", "ControlLeft", "ControlRight", "Tab", "CapsLock"].includes(code);
+
+          const baseFreq = isSpace ? 190 : (isMod ? 320 : (480 + (code.charCodeAt(code.length - 1) % 7) * 12));
+          const duration = isSpace ? 0.038 : 0.026;
+          const vol = isSpace ? 0.065 : (isMod ? 0.055 : 0.048);
+
+          // 1. High-frequency transient contact tick
+          const oscTick = ctx.createOscillator();
+          const gainTick = ctx.createGain();
+          oscTick.type = "triangle";
+          oscTick.frequency.setValueAtTime(baseFreq * 2.8, now);
+          oscTick.frequency.exponentialRampToValueAtTime(140, now + 0.010);
+          gainTick.gain.setValueAtTime(vol * 0.9, now);
+          gainTick.gain.exponentialRampToValueAtTime(0.0001, now + 0.010);
+          oscTick.connect(gainTick);
+          gainTick.connect(ctx.destination);
+          oscTick.start(now);
+          oscTick.stop(now + 0.010);
+
+          // 2. Mechanical bottom-out switch resonance (thock)
+          const oscBody = ctx.createOscillator();
+          const gainBody = ctx.createGain();
+          oscBody.type = "sine";
+          oscBody.frequency.setValueAtTime(baseFreq, now);
+          oscBody.frequency.exponentialRampToValueAtTime(baseFreq * 0.42, now + duration);
+          gainBody.gain.setValueAtTime(vol, now);
+          gainBody.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          oscBody.connect(gainBody);
+          gainBody.connect(ctx.destination);
+          oscBody.start(now);
+          oscBody.stop(now + duration);
+        } catch (e) {}
+      }
+
+      function playKeyRelease(code = "KeyA") {
+        try {
+          const ctx = getContext();
+          const now = ctx.currentTime;
+          const isSpace = code === "Space";
+          const baseFreq = isSpace ? 340 : (590 + (code.charCodeAt(code.length - 1) % 5) * 15);
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(baseFreq, now);
+          osc.frequency.exponentialRampToValueAtTime(180, now + 0.014);
+          gain.gain.setValueAtTime(0.022, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.014);
+        } catch (e) {}
+      }
+
+      function playMouseClick(freq = 600, type = "triangle", duration = 0.04) {
+        try {
+          const ctx = getContext();
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          osc.frequency.exponentialRampToValueAtTime(140, now + duration);
+          gain.gain.setValueAtTime(0.045, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (e) {}
+      }
+
+      return {
+        playKeyClick,
+        playKeyRelease,
+        playMouseClick
+      };
+    })();
+
+    function activateKey(code) {
+      // Find key cap element
+      let el = document.querySelector(`.key-cap[data-key="${code}"]`);
+      if (!el && code === "Space") el = document.querySelector(`.key-cap[data-key="Space"]`);
+      if (!el && code === "ShiftRight") el = document.querySelector(`.key-cap[data-key="ShiftLeft"]`);
+      if (!el && code === "AltRight") el = document.querySelector(`.key-cap[data-key="AltLeft"]`);
+      if (!el && code === "ControlRight") el = document.querySelector(`.key-cap[data-key="ControlLeft"]`);
+      if (!el && (code === "NumpadComma" || code === "Comma" || code === ",")) el = document.querySelector(`.key-cap[data-key="Comma"]`);
+      if (!el && (code === "Digit4" || code === "4")) el = document.querySelector(`.key-cap[data-key="Digit4"]`);
+
+      if (el) {
+        el.classList.add("is-pressed");
+      }
+      TacticalAudio.playKeyClick(code);
+
+      // Update Hand HUD & Overlay only for mapped colored tactical keys
+      const canonicalCode = (code === "," || code === "NumpadComma") ? "Comma" : (code === "4" ? "Digit4" : code);
+      const data = fingerMap[canonicalCode] || (canonicalCode === "ShiftRight" ? fingerMap["ShiftLeft"] : null);
+      const promptEl = document.getElementById("telemetryPrompt");
+      const activeRowEl = document.getElementById("telemetryActiveRow");
+      const keyChip = document.getElementById("activeKeyChip");
+      const actionName = document.getElementById("activeActionName");
+      const fingerBadge = document.getElementById("activeFingerBadge");
+
+      if (data) {
+        // Reset previous finger highlights in telemetry HUD
+        document.querySelectorAll(".finger-pad").forEach(p => p.classList.remove("active"));
+        document.querySelectorAll(".hand-bone").forEach(b => {
+          b.className.baseVal = "hand-bone";
+        });
+
+        const pad = document.getElementById(`pad-${data.finger}`);
+        const bone = document.getElementById(`bone-${data.finger}`);
+        if (pad) pad.classList.add("active");
+        if (bone) bone.classList.add(`active-${data.finger}`);
+
+        // Light up overlay fingertip pad and spline
+        const overlayPad = document.getElementById(`fingertip-${data.finger}`);
+        const overlaySpline = document.getElementById(`finger-spline-${data.finger}`);
+        if (overlayPad) overlayPad.classList.add("is-pressed");
+        if (overlaySpline) overlaySpline.classList.add("active-spline");
+
+        if (promptEl) promptEl.style.display = "none";
+        if (activeRowEl) activeRowEl.style.display = "flex";
+
+        const label = el ? el.querySelector(".key-id")?.innerText || code : code;
+        const action = el ? el.querySelector(".key-action")?.innerText || data.role : data.role;
+
+        if (keyChip) keyChip.innerText = `[ ${label} ]`;
+        if (actionName) actionName.innerText = action;
+        if (fingerBadge) {
+          fingerBadge.innerText = data.label;
+          fingerBadge.style.color = data.color;
+          fingerBadge.style.background = `${data.color}22`;
+          fingerBadge.style.borderColor = data.color;
+        }
+
+        // Kinematics: articulate assigned finger to target keycap
+        const finger = fingerState[data.finger];
+        if (finger) {
+          finger.activeKeys.delete(canonicalCode);
+          finger.activeKeys.add(canonicalCode);
+
+          const targetCoord = getTargetForCode(canonicalCode);
+          if (targetCoord) {
+            finger.target = { x: targetCoord.x, y: targetCoord.y };
+            finger.startPos = { x: finger.current.x, y: finger.current.y };
+            finger.startTime = performance.now();
+            finger.duration = 85; // 100-150ms reach
+            finger.isAnimating = true;
+            startAnimationLoop();
+          }
+        }
+      }
+    }
+
+    function deactivateKey(code) {
+      let el = document.querySelector(`.key-cap[data-key="${code}"]`);
+      if (!el && code === "Space") el = document.querySelector(`.key-cap[data-key="Space"]`);
+      if (!el && code === "ShiftRight") el = document.querySelector(`.key-cap[data-key="ShiftLeft"]`);
+      if (!el && code === "AltRight") el = document.querySelector(`.key-cap[data-key="AltLeft"]`);
+      if (!el && code === "ControlRight") el = document.querySelector(`.key-cap[data-key="ControlLeft"]`);
+      if (!el && (code === "NumpadComma" || code === "Comma" || code === ",")) el = document.querySelector(`.key-cap[data-key="Comma"]`);
+      if (!el && (code === "Digit4" || code === "4")) el = document.querySelector(`.key-cap[data-key="Digit4"]`);
+
+      if (el) {
+        el.classList.remove("is-pressed");
+      }
+      TacticalAudio.playKeyRelease(code);
+
+      const canonicalCode = (code === "," || code === "NumpadComma") ? "Comma" : (code === "4" ? "Digit4" : code);
+      const data = fingerMap[canonicalCode] || (canonicalCode === "ShiftRight" ? fingerMap["ShiftLeft"] : null);
+      if (data) {
+        const finger = fingerState[data.finger];
+        if (finger) {
+          const wasActive = finger.activeKeys.has(canonicalCode);
+          finger.activeKeys.delete(canonicalCode);
+
+          if (wasActive) {
+            if (finger.activeKeys.size === 0) {
+              // Return smoothly to resting home position
+              finger.target = { ...finger.home };
+              finger.startPos = { x: finger.current.x, y: finger.current.y };
+              finger.startTime = performance.now();
+              finger.duration = 180; // 150-180ms return
+              finger.isAnimating = true;
+              startAnimationLoop();
+
+              const overlayPad = document.getElementById(`fingertip-${data.finger}`);
+              const overlaySpline = document.getElementById(`finger-spline-${data.finger}`);
+              if (overlayPad) overlayPad.classList.remove("is-pressed");
+              if (overlaySpline) overlaySpline.classList.remove("active-spline");
+            } else {
+              // Retarget to the most recent held key for this finger
+              const remainingKeys = Array.from(finger.activeKeys);
+              const latestKey = remainingKeys[remainingKeys.length - 1];
+              const targetCoord = getTargetForCode(latestKey);
+              if (targetCoord) {
+                const dx = targetCoord.x - finger.current.x;
+                const dy = targetCoord.y - finger.current.y;
+                if (Math.hypot(dx, dy) > 0.1) {
+                  finger.target = { x: targetCoord.x, y: targetCoord.y };
+                  finger.startPos = { x: finger.current.x, y: finger.current.y };
+                  finger.startTime = performance.now();
+                  finger.duration = 180;
+                  finger.isAnimating = true;
+                  startAnimationLoop();
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Check if any keys are still pressed
+      const anyPressed = document.querySelector(".key-cap.is-pressed");
+      if (!anyPressed) {
+        for (const f of ["pinky", "ring", "middle", "index", "thumb"]) {
+          fingerState[f].activeKeys.clear();
+        }
+        const promptEl = document.getElementById("telemetryPrompt");
+        const activeRowEl = document.getElementById("telemetryActiveRow");
+        if (promptEl) promptEl.style.display = "block";
+        if (activeRowEl) activeRowEl.style.display = "none";
+        document.querySelectorAll(".finger-pad").forEach(p => p.classList.remove("active"));
+        document.querySelectorAll(".hand-bone").forEach(b => {
+          b.className.baseVal = "hand-bone";
+        });
+      }
+    }
+
+    // Keyboard Event Listeners (Restricted to test runner automation; physical typing does not act on showcase)
+    window.addEventListener("keydown", (e) => {
+      if (!navigator.webdriver && !window.__allowKeyboardInput) return;
+      if (e.repeat) return;
+      if (e.code === "Space" && e.target === document.body) {
+        e.preventDefault();
+      }
+      activateKey(e.code);
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (!navigator.webdriver && !window.__allowKeyboardInput) return;
+      deactivateKey(e.code);
+    });
+
+    // Virtual Keyboard Mouse Click Handlers
+    document.addEventListener("mousedown", (e) => {
+      const keyCap = e.target.closest(".key-cap");
+      if (keyCap) {
+        const code = keyCap.getAttribute("data-key");
+        if (code) activateKey(code);
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      document.querySelectorAll(".key-cap.is-pressed").forEach(el => {
+        const code = el.getAttribute("data-key");
+        if (code) deactivateKey(code);
+      });
+    });
+
+    // Interactive Decoupled Utility Mouse Click Handlers
+    (function initInteractiveMouse() {
+      function triggerMouseButton(btnKey) {
+        const targets = document.querySelectorAll(`[data-mouse-btn="${btnKey}"]`);
+        targets.forEach(el => el.classList.add("is-pressed"));
+        if (btnKey === "wheelup" || btnKey === "wheeldown") {
+          const wheel = document.getElementById("mouseBtnWheel");
+          if (wheel) wheel.classList.add("is-pressed");
+        }
+        setTimeout(() => {
+          targets.forEach(el => el.classList.remove("is-pressed"));
+          const wheel = document.getElementById("mouseBtnWheel");
+          if (wheel && (btnKey === "wheelup" || btnKey === "wheeldown")) {
+            wheel.classList.remove("is-pressed");
+          }
+        }, 130);
+      }
+
+      const mouseSvg = document.querySelector(".mouse-svg");
+      if (mouseSvg) {
+        // Prevent default context menu on right clicking mouse SVG
+        mouseSvg.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          triggerMouseButton("rmb");
+          TacticalAudio.playMouseClick(700, "triangle");
+        });
+
+        // Interactive mouse wheel scrolling over mouse SVG
+        mouseSvg.addEventListener("wheel", (e) => {
+          e.preventDefault();
+          if (e.deltaY < 0) {
+            triggerMouseButton("wheelup");
+            TacticalAudio.playMouseClick(950, "triangle");
+          } else {
+            triggerMouseButton("wheeldown");
+            TacticalAudio.playMouseClick(850, "triangle");
+          }
+        }, { passive: false });
+      }
+
+      document.querySelectorAll(".mouse-clickable-btn, .mouse-clickable-badge").forEach(el => {
+        el.addEventListener("pointerdown", (e) => {
+          if (e.button === 2) return; // Right click handled by contextmenu
+          e.preventDefault();
+          const key = el.getAttribute("data-mouse-btn");
+          triggerMouseButton(key);
+          if (key === "lmb") TacticalAudio.playMouseClick(750, "triangle");
+          else if (key === "rmb") TacticalAudio.playMouseClick(700, "triangle");
+          else if (key === "wheel") TacticalAudio.playMouseClick(520, "sine");
+          else if (key === "wheelup") TacticalAudio.playMouseClick(950, "triangle");
+          else if (key === "wheeldown") TacticalAudio.playMouseClick(850, "triangle");
+          else TacticalAudio.playMouseClick(640, "triangle");
+        });
+      });
+    })();
+
+</script>
+</body>
+</html>
